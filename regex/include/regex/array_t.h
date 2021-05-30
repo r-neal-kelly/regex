@@ -17,6 +17,7 @@ typedef struct array_t
 }
 array_t;
 
-void array_create(array_t* it, word_t type_count, f32_t grow_rate);
-void array_destroy(array_t* it);
-void array_reserve(array_t* it, word_t type_count);
+bool_t  array_create(array_t* it, allocator_i* allocator, word_t type_size, word_t reserve_type_count, f32_t grow_rate);
+void_t  array_destroy(array_t* it);
+bool_t  array_is_valid(array_t* it);
+void_t  array_reserve(array_t* it, word_t type_count);

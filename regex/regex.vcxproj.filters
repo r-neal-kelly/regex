@@ -15,15 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\array.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="include\regex\intrinsic.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\regex\allocator_t.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\regex\array_t.h">
@@ -35,5 +27,43 @@
     <ClInclude Include="include\regex\pointer_t.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\regex\callocator_t.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\regex\allocator_i.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\regex\os.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\regex\allocator_t.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\regex\math.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\array_t.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\os.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\allocator_t.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\math.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\callocator_t.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\memory_t.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\pointer_t.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

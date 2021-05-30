@@ -141,14 +141,24 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="include\regex\allocator_t.h" />
+    <ClInclude Include="include\regex\allocator_i.h" />
     <ClInclude Include="include\regex\array_t.h" />
+    <ClInclude Include="include\regex\callocator_t.h" />
+    <ClInclude Include="include\regex\math.h" />
+    <ClInclude Include="include\regex\os.h" />
+    <ClInclude Include="include\regex\allocator_t.h" />
     <ClInclude Include="include\regex\intrinsic.h" />
     <ClInclude Include="include\regex\memory_t.h" />
     <ClInclude Include="include\regex\pointer_t.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\array.c" />
+    <ClCompile Include="src\array_t.c" />
+    <ClCompile Include="src\callocator_t.c" />
+    <ClCompile Include="src\allocator_t.c" />
+    <ClCompile Include="src\math.c" />
+    <ClCompile Include="src\memory_t.c" />
+    <ClCompile Include="src\os.c" />
+    <ClCompile Include="src\pointer_t.c" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

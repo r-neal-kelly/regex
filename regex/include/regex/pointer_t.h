@@ -12,3 +12,5 @@ typedef struct pointer_t
     word_t  byte_count;
 }
 pointer_t;
+
+bool_t  pointer_is_valid(pointer_t* it);
