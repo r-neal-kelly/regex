@@ -25,10 +25,24 @@ int main(int argument_count, char* arguments[])
     printf("address of allocator.deallocate: %p\n", ALLOCATOR.deallocate);
 
     array_create(&arr, &CALLOCATOR, sizeof(u64_t), 16, 1.7f);
-    printf("arr type_size: %zu", arr.type_size);
+
+    printf("arr type_size: %zu\n", arr.type_size);
     for (word_t idx = 0, end = arr.memory.pointer.byte_count / 8; idx < end; idx += 1) {
         printf("    idx %zu: %zu\n", idx, ((u64_t*)arr.memory.pointer.bytes)[idx]);
     }
+
+    u64_t value;
+    for (word_t idx = 0, end = 24; idx < end; idx += 1) {
+        value = idx * 5;
+        array_push(&arr, (byte_t*)&value);
+    }
+
+    u64_t* value_ptr;
+    for (word_t idx = 0, end = array_count(&arr); idx < end; idx += 1) {
+        value_ptr = (u64_t*)array_access(&arr, idx);
+        printf("    idx %zu: %zu\n", idx, *value_ptr);
+    }
+
     array_destroy(&arr);
 
     c = getc(stdin);

@@ -16,6 +16,7 @@ typedef struct memory_t
 }
 memory_t;
 
-bool_t  memory_create(memory_t* it, allocator_i* allocator, word_t byte_count);
+bool_t  memory_create(memory_t* it, allocator_i* allocator, word_t reserve_byte_count);
 void_t  memory_destroy(memory_t* it);
 bool_t  memory_is_valid(memory_t* it);
+bool_t  memory_reserve(memory_t* it, word_t reserve_byte_count);
