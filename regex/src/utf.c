@@ -96,6 +96,8 @@ bool_t string_utf_32_to_utf_8(const utf_32_t* it, array_t* result)
     assert(array_is_valid(result));
     assert(array_type_size(result) == sizeof(utf_8_t));
 
+    array_clear(result);
+
     if (*it) {
         byte_t* bytes = (byte_t*)it;
         if (bytes[0] == 0xFF && bytes[1] == 0xFE && bytes[2] == 0x00 && bytes[3] == 0x00) {
@@ -104,7 +106,6 @@ bool_t string_utf_32_to_utf_8(const utf_32_t* it, array_t* result)
             return string_utf_32_be_to_utf_8(it, result);
         }
     } else {
-        array_clear(result);
         array_push(result, it);
         return 1;
     }
@@ -116,6 +117,8 @@ bool_t string_utf_32_le_to_utf_8(const utf_32_t* it, array_t* result)
     assert(result);
     assert(array_is_valid(result));
     assert(array_type_size(result) == sizeof(utf_8_t));
+
+    array_clear(result);
 
     if (*it) {
         utf_sequence_32_t from;
@@ -131,7 +134,6 @@ bool_t string_utf_32_le_to_utf_8(const utf_32_t* it, array_t* result)
 
         return 1;
     } else {
-        array_clear(result);
         array_push(result, it);
 
         return 1;
@@ -144,6 +146,8 @@ bool_t string_utf_32_be_to_utf_8(const utf_32_t* it, array_t* result)
     assert(result);
     assert(array_is_valid(result));
     assert(array_type_size(result) == sizeof(utf_8_t));
+
+    array_clear(result);
 
     if (*it) {
         utf_sequence_32_t from;
@@ -159,7 +163,6 @@ bool_t string_utf_32_be_to_utf_8(const utf_32_t* it, array_t* result)
 
         return 1;
     } else {
-        array_clear(result);
         array_push(result, it);
 
         return 1;
