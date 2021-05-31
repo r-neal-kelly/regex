@@ -29,7 +29,7 @@ int main(int argument_count, char* arguments[])
         printf("    idx %zu: %zu\n", idx, ((u64_t*)arr.memory.pointer.bytes)[idx]);
     }
 
-    for (word_t idx = 0, end = 24; idx < end; idx += 1) {
+    for (word_t idx = 0, end = 26; idx < end; idx += 1) {
         u64_t value = idx * 5;
         array_push(&arr, &value);
         printf("arr capacity: %zu\n", array_capacity(&arr));

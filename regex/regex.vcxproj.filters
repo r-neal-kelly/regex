@@ -42,19 +42,7 @@
     <ClInclude Include="include\regex\math.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\regex\encoder_utf_16_le.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\regex\encoder_utf_16_be.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\regex\encoder_utf_32_le.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\regex\encoder_utf_32_be.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\regex\encoder_utf_8.h">
+    <ClInclude Include="include\regex\utf.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -78,6 +66,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\pointer_t.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\utf.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

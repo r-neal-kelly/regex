@@ -144,11 +144,7 @@
     <ClInclude Include="include\regex\allocator_i.h" />
     <ClInclude Include="include\regex\array_t.h" />
     <ClInclude Include="include\regex\callocator_t.h" />
-    <ClInclude Include="include\regex\encoder_utf_16_be.h" />
-    <ClInclude Include="include\regex\encoder_utf_16_le.h" />
-    <ClInclude Include="include\regex\encoder_utf_32_be.h" />
-    <ClInclude Include="include\regex\encoder_utf_32_le.h" />
-    <ClInclude Include="include\regex\encoder_utf_8.h" />
+    <ClInclude Include="include\regex\utf.h" />
     <ClInclude Include="include\regex\math.h" />
     <ClInclude Include="include\regex\os.h" />
     <ClInclude Include="include\regex\allocator_t.h" />
@@ -160,6 +156,7 @@
     <ClCompile Include="src\array_t.c" />
     <ClCompile Include="src\callocator_t.c" />
     <ClCompile Include="src\allocator_t.c" />
+    <ClCompile Include="src\utf.c" />
     <ClCompile Include="src\math.c" />
     <ClCompile Include="src\memory_t.c" />
     <ClCompile Include="src\os.c" />

@@ -46,7 +46,7 @@ bool_t array_reserve(array_t* it, word_t reserve_type_count)
     assert(reserve_type_count > 0);
     assert(array_is_valid(it));
 
-    if (reserve_type_count <= _REGEX_MAX_WORD / it->type_size) {
+    if (reserve_type_count <= MAX_WORD / it->type_size) {
         word_t reserve_byte_count = it->type_size * reserve_type_count;
         if (it->memory.pointer.byte_count < reserve_byte_count) {
             return memory_reserve(&it->memory, reserve_byte_count);
@@ -108,6 +108,14 @@ word_t array_count(array_t* it)
     return it->type_count;
 }
 
+word_t array_type_size(array_t* it)
+{
+    assert(it);
+    assert(array_is_valid(it));
+
+    return it->type_size;
+}
+
 void_t* array_access(array_t* it, word_t index)
 {
     assert(it);
@@ -117,7 +125,7 @@ void_t* array_access(array_t* it, word_t index)
     return it->memory.pointer.bytes + (index * it->type_size);
 }
 
-bool_t array_push(array_t* it, void_t* type_in)
+bool_t array_push(array_t* it, const void_t* type_in)
 {
     assert(it);
     assert(type_in);
@@ -146,4 +154,12 @@ bool_t array_pop(array_t* it, void_t* type_out)
     } else {
         return 0;
     }
+}
+
+void_t array_clear(array_t* it)
+{
+    assert(it);
+    assert(array_is_valid(it));
+
+    it->type_count = 0;
 }
