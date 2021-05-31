@@ -11,9 +11,6 @@
 
 int main(int argument_count, char* arguments[])
 {
-    int c;
-    array_t arr;
-
     printf("sizeof pointer_t: %zu\n", sizeof(pointer_t));
     printf("sizeof allocator_t: %zu\n", sizeof(allocator_t));
     printf("sizeof callocator_t: %zu\n", sizeof(callocator_t));
@@ -24,28 +21,28 @@ int main(int argument_count, char* arguments[])
     printf("address of allocator.reallocate: %p\n", ALLOCATOR.reallocate);
     printf("address of allocator.deallocate: %p\n", ALLOCATOR.deallocate);
 
-    array_create(&arr, &CALLOCATOR, sizeof(u64_t), 16, 1.7f);
+    array_t arr;
+    array_create(&arr, &CALLOCATOR, sizeof(u64_t), 16, 1.5f);
 
     printf("arr type_size: %zu\n", arr.type_size);
     for (word_t idx = 0, end = arr.memory.pointer.byte_count / 8; idx < end; idx += 1) {
         printf("    idx %zu: %zu\n", idx, ((u64_t*)arr.memory.pointer.bytes)[idx]);
     }
 
-    u64_t value;
     for (word_t idx = 0, end = 24; idx < end; idx += 1) {
-        value = idx * 5;
-        array_push(&arr, (byte_t*)&value);
+        u64_t value = idx * 5;
+        array_push(&arr, &value);
+        printf("arr capacity: %zu\n", array_capacity(&arr));
     }
 
-    u64_t* value_ptr;
     for (word_t idx = 0, end = array_count(&arr); idx < end; idx += 1) {
-        value_ptr = (u64_t*)array_access(&arr, idx);
+        u64_t* value_ptr = (u64_t*)array_access(&arr, idx);
         printf("    idx %zu: %zu\n", idx, *value_ptr);
     }
 
     array_destroy(&arr);
 
-    c = getc(stdin);
+    int c = getc(stdin);
 
     return 0;
 }

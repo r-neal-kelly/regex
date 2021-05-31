@@ -42,31 +42,30 @@ bool_t array_is_valid(array_t* it)
 
 bool_t array_reserve(array_t* it, word_t reserve_type_count)
 {
-    word_t reserve_byte_count;
-
     assert(it);
     assert(reserve_type_count > 0);
     assert(array_is_valid(it));
 
-    reserve_byte_count = it->type_size * reserve_type_count;
-    if (it->memory.pointer.byte_count < reserve_byte_count) {
-        return memory_reserve(&it->memory, reserve_byte_count);
+    if (reserve_type_count <= _REGEX_MAX_WORD / it->type_size) {
+        word_t reserve_byte_count = it->type_size * reserve_type_count;
+        if (it->memory.pointer.byte_count < reserve_byte_count) {
+            return memory_reserve(&it->memory, reserve_byte_count);
+        } else {
+            return 1;
+        }
     } else {
-        return 1;
+        return 0;
     }
 }
 
 bool_t array_should_grow(array_t* it)
 {
-    word_t new_type_count;
-    word_t new_byte_count;
-
     assert(it);
     assert(array_is_valid(it));
 
-    new_type_count = it->type_count + 1;
+    word_t new_type_count = it->type_count + 1;
     if (new_type_count > it->type_count) {
-        new_byte_count = new_type_count * it->type_size;
+        word_t new_byte_count = new_type_count * it->type_size;
         if (new_byte_count > it->type_count * it->type_size) {
             return new_byte_count > it->memory.pointer.byte_count;
         } else {
@@ -79,12 +78,10 @@ bool_t array_should_grow(array_t* it)
 
 bool_t array_grow(array_t* it)
 {
-    word_t reserve_byte_count;
-
     assert(it);
     assert(array_is_valid(it));
 
-    reserve_byte_count = (word_t)(it->memory.pointer.byte_count * it->grow_rate) + it->type_size;
+    word_t reserve_byte_count = (word_t)(it->memory.pointer.byte_count * it->grow_rate) + it->type_size;
     if (reserve_byte_count < it->memory.pointer.byte_count) {
         reserve_byte_count = it->memory.pointer.byte_count + it->type_size;
         if (reserve_byte_count < it->memory.pointer.byte_count) {
@@ -100,7 +97,7 @@ word_t array_capacity(array_t* it)
     assert(it);
     assert(array_is_valid(it));
 
-    return it->memory.pointer.byte_count;
+    return it->memory.pointer.byte_count / it->type_size;
 }
 
 word_t array_count(array_t* it)
@@ -111,7 +108,7 @@ word_t array_count(array_t* it)
     return it->type_count;
 }
 
-byte_t* array_access(array_t* it, word_t index)
+void_t* array_access(array_t* it, word_t index)
 {
     assert(it);
     assert(array_is_valid(it));
@@ -120,7 +117,7 @@ byte_t* array_access(array_t* it, word_t index)
     return it->memory.pointer.bytes + (index * it->type_size);
 }
 
-bool_t array_push(array_t* it, byte_t* type_in)
+bool_t array_push(array_t* it, void_t* type_in)
 {
     assert(it);
     assert(type_in);
@@ -136,7 +133,7 @@ bool_t array_push(array_t* it, byte_t* type_in)
     }
 }
 
-bool_t array_pop(array_t* it, byte_t* type_out)
+bool_t array_pop(array_t* it, void_t* type_out)
 {
     assert(it);
     assert(type_out);

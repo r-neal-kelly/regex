@@ -10,12 +10,10 @@
 
 byte_t* os_alloc(word_t byte_count)
 {
-    byte_t* bytes;
-
     assert(byte_count > 0);
 
     errno = 0;
-    bytes = malloc(byte_count);
+    byte_t* bytes = malloc(byte_count);
     if (errno == 0) {
         return bytes;
     } else {
@@ -25,13 +23,11 @@ byte_t* os_alloc(word_t byte_count)
 
 byte_t* os_realloc(byte_t* bytes, word_t new_byte_count)
 {
-    byte_t* new_bytes;
-
     assert(bytes);
     assert(new_byte_count > 0);
 
     errno = 0;
-    new_bytes = realloc(bytes, new_byte_count);
+    byte_t* new_bytes = realloc(bytes, new_byte_count);
     if (errno == 0) {
         return new_bytes;
     } else {
@@ -48,12 +44,10 @@ void_t os_dealloc(byte_t* bytes)
 
 byte_t* os_calloc(word_t byte_count)
 {
-    byte_t* bytes;
-
     assert(byte_count > 0);
 
     errno = 0;
-    bytes = calloc(byte_count, sizeof(byte_t));
+    byte_t* bytes = calloc(byte_count, sizeof(byte_t));
     if (errno == 0) {
         return bytes;
     } else {
@@ -63,13 +57,11 @@ byte_t* os_calloc(word_t byte_count)
 
 byte_t* os_recalloc(byte_t* bytes, word_t new_byte_count)
 {
-    byte_t* new_bytes;
-
     assert(bytes);
     assert(new_byte_count > 0);
 
     errno = 0;
-    new_bytes = _recalloc(bytes, new_byte_count, sizeof(byte_t));
+    byte_t* new_bytes = _recalloc(bytes, new_byte_count, sizeof(byte_t));
     if (errno == 0) {
         return new_bytes;
     } else {

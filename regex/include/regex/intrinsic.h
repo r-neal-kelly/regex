@@ -37,9 +37,17 @@ typedef uint8_t     bool_t;
 typedef uint8_t     byte_t;
 
 #if defined(_REGEX_64)
+
 typedef u64_t       word_t;
 typedef f64_t       fword_t;
+
+#define _REGEX_MAX_WORD 0xFFFFFFFFFFFFFFFF
+
 #elif defined(_REGEX_32)
+
 typedef u32_t       word_t;
 typedef f32_t       fword_t;
+
+#define _REGEX_MAX_WORD 0xFFFFFFFF
+
 #endif

@@ -25,13 +25,11 @@ bool_t allocator_allocate(pointer_t* it, word_t byte_count)
 
 bool_t allocator_reallocate(pointer_t* it, word_t new_byte_count)
 {
-    byte_t* new_bytes;
-
     assert(it);
     assert(it->bytes);
     assert(new_byte_count > 0);
 
-    new_bytes = os_realloc(it->bytes, new_byte_count);
+    byte_t* new_bytes = os_realloc(it->bytes, new_byte_count);
     if (new_bytes) {
         it->bytes = new_bytes;
         it->byte_count = new_byte_count;
