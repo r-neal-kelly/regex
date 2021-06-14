@@ -61,7 +61,7 @@ int main(int argument_count, char* arguments[])
 
     wprintf(L"Testing\n");
 
-    std::ifstream file("./test.txt");
+    std::ifstream file("./test.txt", std::ios::binary);
     array_t buffer;
     array_create(&buffer, &CALLOCATOR, sizeof(u8_t), 16, 1.5f);
     if (file.is_open()) {
