@@ -4,20 +4,15 @@
 
 #include <assert.h>
 #include <fcntl.h>
-#include <fstream>
 #include <io.h>
 #include <stdio.h>
 #include <string.h>
 
-extern "C" {
-
-    #include "regex/allocator_t.h"
-    #include "regex/array_t.h"
-    #include "regex/callocator_t.h"
-    #include "regex/intrinsic.h"
-    #include "regex/utf.h"
-
-}
+#include "regex/allocator_t.h"
+#include "regex/array_t.h"
+#include "regex/callocator_t.h"
+#include "regex/intrinsic.h"
+#include "regex/utf.h"
 
 int main(int argument_count, char* arguments[])
 {
@@ -61,17 +56,21 @@ int main(int argument_count, char* arguments[])
 
     wprintf(L"Testing\n");
 
-    std::ifstream file("./test.txt", std::ios::binary);
     array_t buffer;
     array_create(&buffer, &CALLOCATOR, sizeof(u8_t), 16, 1.5f);
-    if (file.is_open()) {
-        char byte = 0;
-        while (file.good()) {
-            file.read(&byte, 1);
-            if (file.good()) {
+    FILE* file = 0;
+    fopen_s(&file, "./test.txt", "rb");
+    if (file) {
+        u8_t byte;
+        while (fread(&byte, sizeof(u8_t), 1, file) > 0) {
+            if (feof(file) == 0) {
                 array_push(&buffer, &byte);
+            } else {
+                break;
             }
         }
+    } else {
+        wprintf(L"Couldn't open file!");
     }
     for (word_t idx = 0, end = sizeof(utf_32_t); idx < end; idx += 1) {
         u8_t zero = 0;
