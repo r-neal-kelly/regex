@@ -12,7 +12,7 @@
 #include "regex/array_t.h"
 #include "regex/callocator_t.h"
 #include "regex/intrinsic.h"
-#include "regex/utf.h"
+#include "regex/string_utf_t.h"
 
 int main(int argument_count, char* arguments[])
 {

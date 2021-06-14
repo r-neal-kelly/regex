@@ -11,8 +11,8 @@ typedef struct allocator_i allocator_i;
 
 typedef struct memory_t
 {
-    allocator_i*    allocator;
     pointer_t       pointer;
+    allocator_i*    allocator;
 }
 memory_t;
 
