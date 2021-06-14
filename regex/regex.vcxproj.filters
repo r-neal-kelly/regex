@@ -18,9 +18,6 @@
     <ClInclude Include="include\regex\intrinsic.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\regex\array_t.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\regex\memory_t.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -43,6 +40,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\regex\utf.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\regex\array_t.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

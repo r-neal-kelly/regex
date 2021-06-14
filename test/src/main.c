@@ -71,6 +71,7 @@ int main(int argument_count, char* arguments[])
         }
     } else {
         wprintf(L"Couldn't open file!");
+        assert(0);
     }
     for (word_t idx = 0, end = sizeof(utf_32_t); idx < end; idx += 1) {
         u8_t zero = 0;
@@ -85,7 +86,6 @@ int main(int argument_count, char* arguments[])
 
     array_t buffer_2;
     array_create(&buffer_2, &CALLOCATOR, sizeof(u16_t), 16, 1.5f);
-    //utf_string_16_be_to_16_le((utf_16_t*)buffer.memory.pointer.bytes, &buffer_2);
     utf_string_8_to_16_le((utf_8_t*)buffer.memory.pointer.bytes, &buffer_2);
 
     wprintf(L"After conversion: %s\n", (wchar_t*)buffer_2.memory.pointer.bytes);
