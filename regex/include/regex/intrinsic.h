@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "stdint.h"
+#include <stdint.h>
 
 #if _WIN64 || _WIN32
     #define IS_WINDOWS

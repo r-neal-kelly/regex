@@ -2,7 +2,7 @@
     Copyright 2021 r-neal-kelly
 */
 
-#include "assert.h"
+#include <assert.h>
 
 #include "regex/array_t.h"
 #include "regex/os.h"
@@ -367,6 +367,52 @@ void_t utf_sequence_32_to_16(const utf_sequence_32_t* it, utf_sequence_16_t* to)
         to->a = ((it->a - 0x10000) >> 10) + SURROGATE_HIGH_FIRST;
         to->b = ((it->a - 0x10000) & 0x3FF) + SURROGATE_LOW_FIRST;
         to->count = 2;
+    }
+}
+
+void_t utf_string_8_to_16_le(const utf_8_t* it, array_t* result)
+{
+    assert(it);
+    assert(result);
+    assert(array_is_valid(result));
+    assert(array_type_size(result) == sizeof(utf_16_t));
+
+    array_clear(result);
+
+    if (*it) {
+        bool_t do_swap = os_is_big_endian();
+        utf_sequence_8_t from;
+        utf_sequence_16_t to;
+        while (*it) {
+            it += utf_sequence_8_read(&from, it);
+            utf_sequence_8_to_16(&from, &to);
+            utf_sequence_16_write(&to, result, do_swap);
+        }
+        array_push(result, it);
+    } else {
+        array_push(result, it);
+    }
+}
+
+void_t utf_string_16_be_to_16_le(const utf_16_t* it, array_t* result)
+{
+    assert(it);
+    assert(result);
+    assert(array_is_valid(result));
+    assert(array_type_size(result) == sizeof(utf_16_t));
+
+    array_clear(result);
+
+    if (*it) {
+        bool_t do_swap = os_is_little_endian();
+        utf_sequence_16_t sequence;
+        while (*it) {
+            it += utf_sequence_16_read(&sequence, it, do_swap);
+            utf_sequence_16_write(&sequence, result, !do_swap);
+        }
+        array_push(result, it);
+    } else {
+        array_push(result, it);
     }
 }
 

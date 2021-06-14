@@ -2,7 +2,7 @@
     Copyright 2021 r-neal-kelly
 */
 
-#include "assert.h"
+#include <assert.h>
 
 #include "regex/callocator_t.h"
 #include "regex/os.h"

@@ -2,7 +2,7 @@
     Copyright 2021 r-neal-kelly
 */
 
-#include "assert.h"
+#include <assert.h>
 
 #include "regex/allocator_i.h"
 #include "regex/memory_t.h"

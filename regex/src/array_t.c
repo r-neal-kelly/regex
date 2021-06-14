@@ -2,8 +2,8 @@
     Copyright 2021 r-neal-kelly
 */
 
-#include "assert.h"
-#include "string.h"
+#include <assert.h>
+#include <string.h>
 
 #include "regex/array_t.h"
 

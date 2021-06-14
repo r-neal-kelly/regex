@@ -2,9 +2,9 @@
     Copyright 2021 r-neal-kelly
 */
 
-#include "assert.h"
-#include "errno.h"
-#include "stdlib.h"
+#include <assert.h>
+#include <errno.h>
+#include <stdlib.h>
 
 #include "regex/os.h"
 
