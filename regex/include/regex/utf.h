@@ -54,7 +54,11 @@ void_t  utf_sequence_32_to_16(const utf_sequence_32_t* it, utf_sequence_16_t* to
 // both args in the following functions will eventually be string types
 
 void_t  utf_string_8_to_16_le(const utf_8_t* it, array_t* result);
+void_t  utf_string_8_to_16_be(const utf_8_t* it, array_t* result);
+void_t  utf_string_8_to_32_le(const utf_8_t* it, array_t* result);
+void_t  utf_string_8_to_32_be(const utf_8_t* it, array_t* result);
 
+void_t  utf_string_16_le_to_16_be(const utf_16_t* it, array_t* result);
 void_t  utf_string_16_be_to_16_le(const utf_16_t* it, array_t* result);
 
 void_t  utf_string_32_to_8(const utf_32_t* it, array_t* result);
@@ -63,3 +67,5 @@ void_t  utf_string_32_be_to_8(const utf_32_t* it, array_t* result);
 void_t  utf_string_32_to_16(const utf_32_t* it, array_t* result);
 void_t  utf_string_32_le_to_16_le(const utf_32_t* it, array_t* result);
 void_t  utf_string_32_be_to_16_be(const utf_32_t* it, array_t* result);
+void_t  utf_string_32_le_to_32_be(const utf_32_t* it, array_t* result);
+void_t  utf_string_32_be_to_32_le(const utf_32_t* it, array_t* result);
