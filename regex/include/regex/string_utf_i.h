@@ -4,23 +4,27 @@
 
 #pragma once
 
+#include "regex/error_e.h"
 #include "regex/intrinsic.h"
+#include "regex/string_utf_type_e.h"
 
 typedef struct string_utf_t string_utf_t;
 
 typedef struct string_utf_i
 {
-    word_t(* const type)();
-    void_t(* const push_null)(string_utf_t* it);
+    string_utf_type_e   (* const type)();
+    word_t              (* const type_size)();
+
+    bool_t              (* const has_terminator)(const string_utf_t* it);
+    error_e             (* const terminate)(string_utf_t* it);
 }
 string_utf_i;
 
-// split these up into their own headers, which will make the pattern obvious how to extend the system.
-// we may as well make the funcs publically available also
-extern string_utf_i STRING_UTF_8_i;
-extern string_utf_i STRING_UTF_16_i;
-extern string_utf_i STRING_UTF_16_le_i;
-extern string_utf_i STRING_UTF_16_be_i;
-extern string_utf_i STRING_UTF_32_i;
-extern string_utf_i STRING_UTF_32_le_i;
-extern string_utf_i STRING_UTF_32_be_i;
+#define DEFINE_STRING_UTF_i(LABEL_LEAD_)    \
+{                                           \
+    &LABEL_LEAD_ ## _type,                  \
+    &LABEL_LEAD_ ## _type_size,             \
+                                            \
+    &LABEL_LEAD_ ## _has_terminator,        \
+    &LABEL_LEAD_ ## _terminate,             \
+}

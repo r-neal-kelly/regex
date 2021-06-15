@@ -150,6 +150,12 @@
     <ClInclude Include="include\regex\intrinsic.h" />
     <ClInclude Include="include\regex\memory_t.h" />
     <ClInclude Include="include\regex\pointer_t.h" />
+    <ClInclude Include="include\regex\string_utf_16_be_i.h" />
+    <ClInclude Include="include\regex\string_utf_16_le_i.h" />
+    <ClInclude Include="include\regex\string_utf_32_be_i.h" />
+    <ClInclude Include="include\regex\string_utf_32_le_i.h" />
+    <ClInclude Include="include\regex\string_utf_8_i.h" />
+    <ClInclude Include="include\regex\error_e.h" />
     <ClInclude Include="include\regex\string_utf_type_e.h" />
     <ClInclude Include="include\regex\string_utf_i.h" />
     <ClInclude Include="include\regex\utf_sequence_t.h" />
@@ -163,6 +169,11 @@
     <ClCompile Include="src\memory_t.c" />
     <ClCompile Include="src\os.c" />
     <ClCompile Include="src\pointer_t.c" />
+    <ClCompile Include="src\string_utf_16_be_i.c" />
+    <ClCompile Include="src\string_utf_16_le_i.c" />
+    <ClCompile Include="src\string_utf_32_be_i.c" />
+    <ClCompile Include="src\string_utf_32_le_i.c" />
+    <ClCompile Include="src\string_utf_8_i.c" />
     <ClCompile Include="src\utf_sequence_t.c" />
     <ClCompile Include="src\string_utf_t.c" />
   </ItemGroup>

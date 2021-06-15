@@ -54,6 +54,24 @@
     <ClInclude Include="include\regex\string_utf_type_e.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\regex\string_utf_8_i.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\regex\string_utf_16_le_i.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\regex\string_utf_16_be_i.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\regex\string_utf_32_le_i.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\regex\string_utf_32_be_i.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\regex\error_e.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\array_t.c">
@@ -81,6 +99,21 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\string_utf_t.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\string_utf_8_i.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\string_utf_16_le_i.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\string_utf_16_be_i.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\string_utf_32_le_i.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\string_utf_32_be_i.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

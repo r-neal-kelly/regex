@@ -44,16 +44,16 @@ typedef uint8_t     byte_t;
 #if defined(IS_64_BIT)
 
 typedef u64_t       word_t;
-typedef f64_t       fword_t;
 typedef u32_t       half_word_t;
+typedef f64_t       float_t;
 
 #define MAX_WORD 0xFFFFFFFFFFFFFFFF
 
 #elif defined(IS_32_BIT)
 
 typedef u32_t       word_t;
-typedef f32_t       fword_t;
 typedef u16_t       half_word_t;
+typedef f32_t       float_t;
 
 #define MAX_WORD 0xFFFFFFFF
 
