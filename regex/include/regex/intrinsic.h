@@ -58,3 +58,6 @@ typedef f32_t       float_t;
 #define MAX_WORD 0xFFFFFFFF
 
 #endif
+
+#define true 1
+#define false 0

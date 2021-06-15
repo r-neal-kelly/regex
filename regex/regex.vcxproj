@@ -156,6 +156,7 @@
     <ClInclude Include="include\regex\string_utf_32_le_i.h" />
     <ClInclude Include="include\regex\string_utf_8_i.h" />
     <ClInclude Include="include\regex\error_e.h" />
+    <ClInclude Include="include\regex\string_utf_iterator_t.h" />
     <ClInclude Include="include\regex\string_utf_type_e.h" />
     <ClInclude Include="include\regex\string_utf_i.h" />
     <ClInclude Include="include\regex\utf_sequence_t.h" />

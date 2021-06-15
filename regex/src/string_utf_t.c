@@ -24,7 +24,7 @@ error_e string_utf_create(string_utf_t* it, string_utf_i* v_table, allocator_i* 
         return error;
     }
 
-    it->point_length = 0;
+    it->point_count = 0;
 
     error = it->v_table->terminate(it);
     if (error) {
@@ -48,7 +48,7 @@ error_e string_utf_copy(string_utf_t* it, const string_utf_t* other, allocator_i
         return error;
     }
 
-    it->v_table.copy(it, other);
+    it->v_table.copy(it, other); // we may be able to do this on this level now that we have the iterator
 
     return ERROR_NONE_e;
 }
@@ -63,14 +63,14 @@ void_t string_utf_destroy(string_utf_t* it)
         array_destroy(&it->array);
     }
 
-    it->point_length = 0;
+    it->point_count = 0;
 }
 
 bool_t string_utf_is_valid(const string_utf_t* it)
 {
     assert(it);
 
-    return array_is_valid(&it->array) && it->v_table && it->v_table->has_terminator(it);
+    return array_is_valid(&it->array) && it->v_table && it->v_table->has_terminator(it) && it->point_count > 0;
 }
 
 string_utf_type_e string_utf_type(const string_utf_t* it)
@@ -110,7 +110,7 @@ word_t string_utf_point_count(const string_utf_t* it)
     assert(it);
     assert(string_utf_is_valid(it));
 
-    return it->point_length + 1;
+    return it->point_count;
 }
 
 word_t string_utf_point_length(const string_utf_t* it)
@@ -118,7 +118,7 @@ word_t string_utf_point_length(const string_utf_t* it)
     assert(it);
     assert(string_utf_is_valid(it));
 
-    return it->point_length;
+    return it->point_count - 1;
 }
 
 void_t string_utf_clear(string_utf_t* it)
@@ -127,7 +127,86 @@ void_t string_utf_clear(string_utf_t* it)
     assert(string_utf_is_valid(it));
 
     array_clear(&it->array);
-    it->point_length = 0;
+    it->point_count = 0;
+    
+    error_e error = it->v_table->terminate(it);
+    assert(error == ERROR_NONE_e);
+}
+
+string_utf_iterator_t string_utf_first(const string_utf_t* it)
+{
+    assert(it);
+    assert(string_utf_is_valid(it));
+
+    string_utf_iterator_t iterator;
+    it->v_table->first(it, &iterator);
+
+    return iterator;
+}
+
+string_utf_iterator_t string_utf_last(const string_utf_t* it)
+{
+    assert(it);
+    assert(string_utf_is_valid(it));
+    assert(string_utf_type_count(it) > 1);
+
+    string_utf_iterator_t iterator;
+    it->v_table->last(it, &iterator);
+
+    return iterator;
+}
+
+string_utf_iterator_t string_utf_end(const string_utf_t* it)
+{
+    assert(it);
+    assert(string_utf_is_valid(it));
+
+    string_utf_iterator_t iterator;
+    it->v_table->end(it, &iterator);
+
+    return iterator;
+}
+
+bool_t string_utf_is_first(const string_utf_t* it, const string_utf_iterator_t* iterator)
+{
+    assert(it);
+    assert(iter);
+    assert(string_utf_is_valid(it));
+
+    // this should go in v_table I think, just in case. and we need it there too anyway.
+    if (iterator->is_in_reverse) {
+        return iterator->type_index - iterator->sequence_type_count == 0;
+    } else {
+        return iterator->type_index == 0;
+    }
+}
+
+bool_t string_utf_is_last(const string_utf_t* it, const string_utf_iterator_t* iterator)
+{
+
+}
+
+bool_t string_utf_is_end(const string_utf_t* it, const string_utf_iterator_t* iterator)
+{
+
+}
+
+bool_t string_utf_next(const string_utf_t* it, string_utf_iterator_t* iterator)
+{
+    assert(it);
+    assert(iter);
+    assert(string_utf_is_valid(it));
+
+    return it->v_table->next(it, iterator);
+}
+
+bool_t string_utf_previous(const string_utf_t* it, string_utf_iterator_t* iterator)
+{
+    assert(it);
+    assert(iter);
+    assert(string_utf_is_valid(it));
+
+    return it->v_table->previous(it, iterator);
 }
 
 

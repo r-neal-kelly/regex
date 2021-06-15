@@ -2,6 +2,8 @@
     Copyright 2021 r-neal-kelly
 */
 
+#include <assert.h>
+
 #include "regex/string_utf_8_i.h"
 #include "regex/string_utf_t.h"
 
@@ -42,6 +44,7 @@ error_e string_utf_8_terminate(string_utf_t* it)
         if (error) {
             return error;
         }
+        it->point_count += 1;
     }
 
     return ERROR_NONE_e;
