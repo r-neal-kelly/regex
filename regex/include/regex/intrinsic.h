@@ -32,10 +32,6 @@ typedef uint64_t    u64_t;
 typedef float       f32_t;
 typedef double      f64_t;
 
-typedef uint8_t     utf_8_t;
-typedef uint16_t    utf_16_t;
-typedef uint32_t    utf_32_t;
-
 typedef void        void_t;
 typedef uint8_t     bool_t;
 

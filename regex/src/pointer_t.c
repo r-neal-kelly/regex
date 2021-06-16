@@ -6,7 +6,7 @@
 
 #include "regex/pointer_t.h"
 
-bool_t pointer_is_valid(pointer_t* it)
+bool_t pointer_is_valid(const pointer_t* it)
 {
     assert(it);
 

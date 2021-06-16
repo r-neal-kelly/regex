@@ -51,9 +51,6 @@
     <ClInclude Include="include\regex\string_utf_i.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\regex\string_utf_type_e.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\regex\string_utf_8_i.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -73,6 +70,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\regex\string_utf_iterator_t.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\regex\utf.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -117,6 +117,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\string_utf_32_be_i.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\utf.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

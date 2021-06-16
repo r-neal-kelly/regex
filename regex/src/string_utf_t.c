@@ -9,24 +9,24 @@
 #include "regex/string_utf_i.h"
 #include "regex/string_utf_t.h"
 
-error_e string_utf_create(string_utf_t* it, string_utf_i* v_table, allocator_i* allocator, word_t reserve_type_count, float_t grow_rate)
+error_e string_utf_create(string_utf_t* it, string_utf_i* interface, allocator_i* allocator, word_t reserve_unit_count, float_t grow_rate)
 {
     assert(it);
-    assert(v_table);
+    assert(interface);
     assert(allocator);
 
     error_e error;
 
-    it->v_table = v_table;
+    it->interface = interface;
 
-    error = array_create(&it->array, allocator, it->v_table->type_size(), reserve_type_count, grow_rate);
+    error = array_create(&it->array, allocator, it->interface->unit_size(), reserve_unit_count, grow_rate);
     if (error) {
         return error;
     }
 
     it->point_count = 0;
 
-    error = it->v_table->terminate(it);
+    error = it->interface->terminate(it);
     if (error) {
         return error;
     }
@@ -41,14 +41,14 @@ error_e string_utf_copy(string_utf_t* it, const string_utf_t* other, allocator_i
     assert(allocator);
     assert(string_utf_is_valid(other));
 
-    it->v_table = other->v_table;
+    it->interface = other->interface;
 
-    error_e error = array_create(&it->array, allocator, it->v_table->type_size(), string_utf_type_count(other), grow_rate);
+    error_e error = array_create(&it->array, allocator, it->interface->unit_size(), string_utf_unit_count(other), grow_rate);
     if (error) {
         return error;
     }
 
-    it->v_table.copy(it, other); // we may be able to do this on this level now that we have the iterator
+    //it->interface.copy(it, other); // we may be able to do this on this level now that we have the iterator
 
     return ERROR_NONE_e;
 }
@@ -57,7 +57,7 @@ void_t string_utf_destroy(string_utf_t* it)
 {
     assert(it);
 
-    it->v_table = 0;
+    it->interface = 0;
 
     if (array_is_valid(&it->array)) {
         array_destroy(&it->array);
@@ -70,39 +70,39 @@ bool_t string_utf_is_valid(const string_utf_t* it)
 {
     assert(it);
 
-    return array_is_valid(&it->array) && it->v_table && it->v_table->has_terminator(it) && it->point_count > 0;
+    return array_is_valid(&it->array) && it->interface && it->interface->has_terminator(it) && it->point_count > 0;
 }
 
-string_utf_type_e string_utf_type(const string_utf_t* it)
+string_utf_i* string_utf_interface(const string_utf_t* it)
 {
     assert(it);
     assert(string_utf_is_valid(it));
 
-    return it->v_table->type();
+    return it->interface;
 }
 
-word_t string_utf_type_size(const string_utf_t* it)
+word_t string_utf_unit_size(const string_utf_t* it)
 {
     assert(it);
     assert(string_utf_is_valid(it));
 
-    return it->v_table->type_size();
+    return it->interface->unit_size();
 }
 
-word_t string_utf_type_count(const string_utf_t* it)
+word_t string_utf_unit_count(const string_utf_t* it)
 {
     assert(it);
     assert(string_utf_is_valid(it));
 
-    return array_count(&it->array);
+    return array_unit_count(&it->array);
 }
 
-word_t string_utf_type_length(const string_utf_t* it)
+word_t string_utf_unit_length(const string_utf_t* it)
 {
     assert(it);
     assert(string_utf_is_valid(it));
 
-    return array_count(&it->array) - 1;
+    return array_unit_count(&it->array) - 1;
 }
 
 word_t string_utf_point_count(const string_utf_t* it)
@@ -121,6 +121,14 @@ word_t string_utf_point_length(const string_utf_t* it)
     return it->point_count - 1;
 }
 
+word_t string_utf_max_unit_sequence_count(const string_utf_t* it)
+{
+    assert(it);
+    assert(string_utf_is_valid(it));
+
+    return it->interface->max_unit_sequence_count();
+}
+
 void_t string_utf_clear(string_utf_t* it)
 {
     assert(it);
@@ -129,7 +137,7 @@ void_t string_utf_clear(string_utf_t* it)
     array_clear(&it->array);
     it->point_count = 0;
     
-    error_e error = it->v_table->terminate(it);
+    error_e error = it->interface->terminate(it);
     assert(error == ERROR_NONE_e);
 }
 
@@ -139,7 +147,7 @@ string_utf_iterator_t string_utf_first(const string_utf_t* it)
     assert(string_utf_is_valid(it));
 
     string_utf_iterator_t iterator;
-    it->v_table->first(it, &iterator);
+    it->interface->first(it, &iterator);
 
     return iterator;
 }
@@ -148,10 +156,10 @@ string_utf_iterator_t string_utf_last(const string_utf_t* it)
 {
     assert(it);
     assert(string_utf_is_valid(it));
-    assert(string_utf_type_count(it) > 1);
+    assert(string_utf_unit_count(it) > 1);
 
     string_utf_iterator_t iterator;
-    it->v_table->last(it, &iterator);
+    it->interface->last(it, &iterator);
 
     return iterator;
 }
@@ -162,33 +170,9 @@ string_utf_iterator_t string_utf_end(const string_utf_t* it)
     assert(string_utf_is_valid(it));
 
     string_utf_iterator_t iterator;
-    it->v_table->end(it, &iterator);
+    it->interface->end(it, &iterator);
 
     return iterator;
-}
-
-bool_t string_utf_is_first(const string_utf_t* it, const string_utf_iterator_t* iterator)
-{
-    assert(it);
-    assert(iter);
-    assert(string_utf_is_valid(it));
-
-    // this should go in v_table I think, just in case. and we need it there too anyway.
-    if (iterator->is_in_reverse) {
-        return iterator->type_index - iterator->sequence_type_count == 0;
-    } else {
-        return iterator->type_index == 0;
-    }
-}
-
-bool_t string_utf_is_last(const string_utf_t* it, const string_utf_iterator_t* iterator)
-{
-
-}
-
-bool_t string_utf_is_end(const string_utf_t* it, const string_utf_iterator_t* iterator)
-{
-
 }
 
 bool_t string_utf_next(const string_utf_t* it, string_utf_iterator_t* iterator)
@@ -196,8 +180,9 @@ bool_t string_utf_next(const string_utf_t* it, string_utf_iterator_t* iterator)
     assert(it);
     assert(iter);
     assert(string_utf_is_valid(it));
+    assert(string_utf_is_valid_iterator(it, iterator));
 
-    return it->v_table->next(it, iterator);
+    return it->interface->next(it, iterator);
 }
 
 bool_t string_utf_previous(const string_utf_t* it, string_utf_iterator_t* iterator)
@@ -205,8 +190,59 @@ bool_t string_utf_previous(const string_utf_t* it, string_utf_iterator_t* iterat
     assert(it);
     assert(iter);
     assert(string_utf_is_valid(it));
+    assert(string_utf_is_valid_iterator(it, iterator));
 
-    return it->v_table->previous(it, iterator);
+    return it->interface->previous(it, iterator);
+}
+
+bool_t string_utf_is_first(const string_utf_t* it, const string_utf_iterator_t* iterator)
+{
+    assert(it);
+    assert(iterator);
+    assert(string_utf_is_valid(it));
+    assert(string_utf_is_valid_iterator(it, iterator));
+
+    return iterator->unit_index == 0;
+}
+
+bool_t string_utf_is_last(const string_utf_t* it, const string_utf_iterator_t* iterator)
+{
+    assert(it);
+    assert(iterator);
+    assert(string_utf_is_valid(it));
+    assert(string_utf_is_valid_iterator(it, iterator));
+
+    return iterator->unit_index + iterator->unit_sequence_count == array_unit_count(&it->array);
+}
+
+bool_t string_utf_is_end(const string_utf_t* it, const string_utf_iterator_t* iterator)
+{
+    assert(it);
+    assert(iterator);
+    assert(string_utf_is_valid(it));
+    assert(string_utf_is_valid_iterator(it, iterator));
+
+    return iterator->unit_index == array_unit_count(&it->array);
+}
+
+bool_t string_utf_is_valid_iterator(const string_utf_t* it, const string_utf_iterator_t* iterator)
+{
+    assert(it);
+    assert(iterator);
+
+    if (string_utf_is_valid(it) &&
+        iterator->unit_index <= string_utf_unit_count(it) &&
+        iterator->point_index <= string_utf_point_count(it) &&
+        utf_32_is_scalar_point(iterator->point) &&
+        iterator->unit_sequence_count < string_utf_max_unit_sequence_count(it)) {
+        if (iterator->is_in_reverse) {
+            return iterator->unit_index >= iterator->unit_sequence_count;
+        } else {
+            return string_utf_unit_count(it) - iterator->unit_index >= iterator->unit_sequence_count;
+        }
+    } else {
+        return false;
+    }
 }
 
 
@@ -218,12 +254,12 @@ bool_t string_utf_previous(const string_utf_t* it, string_utf_iterator_t* iterat
 
 
 
-void_t string_utf_8_to_16_le(const utf_8_t* it, array_t* result)
+/*void_t string_utf_8_to_16_le(const utf_8_t* it, array_t* result)
 {
     assert(it);
     assert(result);
     assert(array_is_valid(result));
-    assert(array_type_size(result) == sizeof(utf_16_t));
+    assert(array_unit_size(result) == sizeof(utf_16_t));
 
     array_clear(result);
 
@@ -247,7 +283,7 @@ void_t string_utf_8_to_16_be(const utf_8_t* it, array_t* result)
     assert(it);
     assert(result);
     assert(array_is_valid(result));
-    assert(array_type_size(result) == sizeof(utf_16_t));
+    assert(array_unit_size(result) == sizeof(utf_16_t));
 
     array_clear(result);
 
@@ -271,7 +307,7 @@ void_t string_utf_8_to_32_le(const utf_8_t* it, array_t* result)
     assert(it);
     assert(result);
     assert(array_is_valid(result));
-    assert(array_type_size(result) == sizeof(utf_32_t));
+    assert(array_unit_size(result) == sizeof(utf_32_t));
 
     array_clear(result);
 
@@ -295,7 +331,7 @@ void_t string_utf_8_to_32_be(const utf_8_t* it, array_t* result)
     assert(it);
     assert(result);
     assert(array_is_valid(result));
-    assert(array_type_size(result) == sizeof(utf_32_t));
+    assert(array_unit_size(result) == sizeof(utf_32_t));
 
     array_clear(result);
 
@@ -319,7 +355,7 @@ void_t string_utf_16_le_to_16_be(const utf_16_t* it, array_t* result)
     assert(it);
     assert(result);
     assert(array_is_valid(result));
-    assert(array_type_size(result) == sizeof(utf_16_t));
+    assert(array_unit_size(result) == sizeof(utf_16_t));
 
     array_clear(result);
 
@@ -341,7 +377,7 @@ void_t string_utf_16_be_to_16_le(const utf_16_t* it, array_t* result)
     assert(it);
     assert(result);
     assert(array_is_valid(result));
-    assert(array_type_size(result) == sizeof(utf_16_t));
+    assert(array_unit_size(result) == sizeof(utf_16_t));
 
     array_clear(result);
 
@@ -363,7 +399,7 @@ void_t string_utf_32_to_8(const utf_32_t* it, array_t* result)
     assert(it);
     assert(result);
     assert(array_is_valid(result));
-    assert(array_type_size(result) == sizeof(utf_8_t));
+    assert(array_unit_size(result) == sizeof(utf_8_t));
 
     array_clear(result);
 
@@ -389,7 +425,7 @@ void_t string_utf_32_le_to_8(const utf_32_t* it, array_t* result)
     assert(it);
     assert(result);
     assert(array_is_valid(result));
-    assert(array_type_size(result) == sizeof(utf_8_t));
+    assert(array_unit_size(result) == sizeof(utf_8_t));
 
     array_clear(result);
 
@@ -413,7 +449,7 @@ void_t string_utf_32_be_to_8(const utf_32_t* it, array_t* result)
     assert(it);
     assert(result);
     assert(array_is_valid(result));
-    assert(array_type_size(result) == sizeof(utf_8_t));
+    assert(array_unit_size(result) == sizeof(utf_8_t));
 
     array_clear(result);
 
@@ -437,7 +473,7 @@ void_t string_utf_32_to_16(const utf_32_t* it, array_t* result)
     assert(it);
     assert(result);
     assert(array_is_valid(result));
-    assert(array_type_size(result) == sizeof(utf_16_t));
+    assert(array_unit_size(result) == sizeof(utf_16_t));
 
     array_clear(result);
 
@@ -463,7 +499,7 @@ void_t string_utf_32_le_to_16_le(const utf_32_t* it, array_t* result)
     assert(it);
     assert(result);
     assert(array_is_valid(result));
-    assert(array_type_size(result) == sizeof(utf_16_t));
+    assert(array_unit_size(result) == sizeof(utf_16_t));
 
     array_clear(result);
 
@@ -487,7 +523,7 @@ void_t string_utf_32_be_to_16_be(const utf_32_t* it, array_t* result)
     assert(it);
     assert(result);
     assert(array_is_valid(result));
-    assert(array_type_size(result) == sizeof(utf_16_t));
+    assert(array_unit_size(result) == sizeof(utf_16_t));
 
     array_clear(result);
 
@@ -511,7 +547,7 @@ void_t string_utf_32_le_to_32_be(const utf_32_t* it, array_t* result)
     assert(it);
     assert(result);
     assert(array_is_valid(result));
-    assert(array_type_size(result) == sizeof(utf_32_t));
+    assert(array_unit_size(result) == sizeof(utf_32_t));
 
     array_clear(result);
 
@@ -533,7 +569,7 @@ void_t string_utf_32_be_to_32_le(const utf_32_t* it, array_t* result)
     assert(it);
     assert(result);
     assert(array_is_valid(result));
-    assert(array_type_size(result) == sizeof(utf_32_t));
+    assert(array_unit_size(result) == sizeof(utf_32_t));
 
     array_clear(result);
 
@@ -548,4 +584,4 @@ void_t string_utf_32_be_to_32_le(const utf_32_t* it, array_t* result)
 
     utf_32_t null = 0;
     array_push(result, &null);
-}
+}*/

@@ -36,7 +36,7 @@ int main(int argument_count, char* arguments[])
     array_t arr;
     array_create(&arr, &CALLOCATOR, sizeof(u64_t), 16, 1.5f);
 
-    wprintf(L"arr type_size: %zu\n", arr.type_size);
+    wprintf(L"arr unit_size: %zu\n", arr.unit_size);
     for (word_t idx = 0, end = arr.memory.pointer.byte_count / 8; idx < end; idx += 1) {
         wprintf(L"    idx %zu: %zu\n", idx, ((u64_t*)arr.memory.pointer.bytes)[idx]);
     }
@@ -47,7 +47,7 @@ int main(int argument_count, char* arguments[])
         wprintf(L"arr capacity: %zu\n", array_capacity(&arr));
     }
 
-    for (word_t idx = 0, end = array_count(&arr); idx < end; idx += 1) {
+    for (word_t idx = 0, end = array_unit_count(&arr); idx < end; idx += 1) {
         u64_t* value_ptr = (u64_t*)array_access(&arr, idx);
         wprintf(L"    idx %zu: %zu\n", idx, *value_ptr);
     }
@@ -79,7 +79,7 @@ int main(int argument_count, char* arguments[])
     }
 
     wprintf(L"Read file: %s\n", (wchar_t*)buffer.memory.pointer.bytes);
-    for (word_t idx = 0, end = array_count(&buffer) / 2; idx < end; idx += 1) {
+    for (word_t idx = 0, end = array_unit_count(&buffer) / 2; idx < end; idx += 1) {
         wprintf(L"0x%X ", ((wchar_t*)buffer.memory.pointer.bytes)[idx]);
     }
     wprintf(L"\n");
@@ -89,7 +89,7 @@ int main(int argument_count, char* arguments[])
     utf_string_8_to_16_le((utf_8_t*)buffer.memory.pointer.bytes, &buffer_2);
 
     wprintf(L"After conversion: %s\n", (wchar_t*)buffer_2.memory.pointer.bytes);
-    for (word_t idx = 0, end = array_count(&buffer_2); idx < end; idx += 1) {
+    for (word_t idx = 0, end = array_unit_count(&buffer_2); idx < end; idx += 1) {
         wprintf(L"0x%X ", ((wchar_t*)buffer_2.memory.pointer.bytes)[idx]);
     }
     wprintf(L"\n");

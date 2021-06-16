@@ -13,4 +13,4 @@ typedef struct pointer_t
 }
 pointer_t;
 
-bool_t  pointer_is_valid(pointer_t* it);
+bool_t  pointer_is_valid(const pointer_t* it);

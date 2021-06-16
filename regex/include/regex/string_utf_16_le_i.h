@@ -9,8 +9,9 @@
 
 extern string_utf_i STRING_UTF_16_LE_i;
 
-string_utf_type_e   string_utf_16_le_type();
-word_t              string_utf_16_le_type_size();
+string_utf_i*   string_utf_16_le_interface();
+word_t          string_utf_16_le_unit_size();
+word_t          string_utf_16_le_max_unit_sequence_count();
 
-bool_t              string_utf_16_le_has_terminator(const string_utf_t* it);
-error_e             string_utf_16_le_terminate(string_utf_t* it);
+bool_t          string_utf_16_le_has_terminator(const string_utf_t* it);
+error_e         string_utf_16_le_terminate(string_utf_t* it);

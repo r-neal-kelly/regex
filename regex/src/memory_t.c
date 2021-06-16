@@ -37,7 +37,7 @@ void_t memory_destroy(memory_t* it)
     it->allocator = 0;
 }
 
-bool_t memory_is_valid(memory_t* it)
+bool_t memory_is_valid(const memory_t* it)
 {
     assert(it);
 
