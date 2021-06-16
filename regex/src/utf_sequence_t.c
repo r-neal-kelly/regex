@@ -251,155 +251,101 @@ u8_t utf_subsequence_8_previous(utf_subsequence_8_t* it, const utf_8_t* from, co
         return READ_UNIT_COUNT_;        \
     }
 
-    if (from - 1 >= first) {
-        if (*(from - 1) >= 0x00 && *(from - 1) <= 0x7F) {
-            read_1(); // w[00..7F]
-        } else if (*(from - 1) >= 0x80 && *(from - 1) <= 0xBF) {
-            if (from - 2 >= first) {
-                if (*(from - 2) >= 0xC2 && *(from - 2) <= 0xDF) {
-                    read_2(); // w[C2..DF, 80..BF]
-                } else if (*(from - 2) >= 0xA0 && *(from - 2) <= 0xBF) {
-                    if (from - 3 >= first) {
-                        if (*(from - 3) == 0xE0) {
-                            read_3(); // w[E0, A0..BF, 80..BF]
-                        } else {
-                            replace(1); // i[.]
-                        }
-                    } else {
-                        replace(1); // i[.]
+    if (*(from - 1) >= 0x00 && *(from - 1) <= 0x7F) {
+        read_1(); // w[00..7F]
+    } else if (*(from - 1) >= 0x80 && *(from - 1) <= 0xBF) {
+        if (from - 2 >= first) {
+            if (*(from - 2) >= 0xC2 && *(from - 2) <= 0xDF) {
+                read_2(); // w[C2..DF, 80..BF]
+            } else if (*(from - 2) >= 0xA0 && *(from - 2) <= 0xBF) {
+                if (from - 3 >= first) {
+                    if (*(from - 3) == 0xE0) {
+                        read_3(); // w[E0, A0..BF, 80..BF]
                     }
-                } else if (*(from - 2) >= 0x80 && *(from - 2) <= 0xBF) {
-                    if (from - 3 >= first) {
-                        if (*(from - 3) >= 0xE1 && *(from - 3) <= 0xEC) {
-                            read_3(); // w[E1..EC, 80..BF, 80..BF]
-                        } else if (*(from - 3) >= 0xEE && *(from - 3) <= 0xEF) {
-                            read_3(); // w[EE..EF, 80..BF, 80..BF]
-                        } else if (*(from - 3) >= 0x90 && *(from - 3) <= 0xBF) {
-                            if (from - 4 >= first) {
-                                if (*(from - 4) == 0xF0) {
-                                    read_4(); // w[F0, 90..BF, 80..BF, 80..BF]
-                                } else {
-                                    replace(1); // i[.]
-                                }
-                            } else {
-                                replace(1); // i[.]
+                }
+            } else if (*(from - 2) >= 0x80 && *(from - 2) <= 0xBF) {
+                if (from - 3 >= first) {
+                    if (*(from - 3) >= 0xE1 && *(from - 3) <= 0xEC) {
+                        read_3(); // w[E1..EC, 80..BF, 80..BF]
+                    } else if (*(from - 3) >= 0xEE && *(from - 3) <= 0xEF) {
+                        read_3(); // w[EE..EF, 80..BF, 80..BF]
+                    } else if (*(from - 3) >= 0x90 && *(from - 3) <= 0xBF) {
+                        if (from - 4 >= first) {
+                            if (*(from - 4) == 0xF0) {
+                                read_4(); // w[F0, 90..BF, 80..BF, 80..BF]
                             }
-                        } else if (*(from - 3) >= 0x80 && *(from - 3) <= 0xBF) {
-                            if (from - 4 >= first) {
-                                if (*(from - 4) >= 0xF1 && *(from - 4) <= 0xF3) {
-                                    read_4(); // w[F1..F3, 80..BF, 80..BF, 80..BF]
-                                } else {
-                                    replace(1); // i[.]
-                                }
-                            } else {
-                                replace(1); // i[.]
+                        }
+                    } else if (*(from - 3) >= 0x80 && *(from - 3) <= 0xBF) {
+                        if (from - 4 >= first) {
+                            if (*(from - 4) >= 0xF1 && *(from - 4) <= 0xF3) {
+                                read_4(); // w[F1..F3, 80..BF, 80..BF, 80..BF]
                             }
-                        } else if (*(from - 3) >= 0x80 && *(from - 3) <= 0x8F) {
-                            if (from - 4 >= first) {
-                                if (*(from - 4) == 0xF4) {
-                                    read_4(); // w[F4, 80..8F, 80..BF, 80..BF]
-                                } else {
-                                    replace(1); // i[.]
-                                }
-                            } else {
-                                replace(1); // i[.]
+                        }
+                    } else if (*(from - 3) >= 0x80 && *(from - 3) <= 0x8F) {
+                        if (from - 4 >= first) {
+                            if (*(from - 4) == 0xF4) {
+                                read_4(); // w[F4, 80..8F, 80..BF, 80..BF]
                             }
-                        } else if (*(from - 3) >= 0xF1 && *(from - 3) <= 0xF3) {
-                            replace(3); // i[F1..F3, 80..BF, 80..BF]
-                        } else {
-                            replace(1); // i[.]
                         }
-                    } else {
-                        replace(1); // i[.]
+                    } else if (*(from - 3) >= 0xF1 && *(from - 3) <= 0xF3) {
+                        replace(3); // i[F1..F3, 80..BF, 80..BF]
                     }
-                } else if (*(from - 2) >= 0x80 && *(from - 2) <= 0x9F) {
-                    if (from - 3 >= first) {
-                        if (*(from - 3) == 0xED) {
-                            read_3(); // w[ED, 80..9F, 80..BF]
-                        } else {
-                            replace(1); // i[.]
-                        }
-                    } else {
-                        replace(1); // i[.]
+                }
+            } else if (*(from - 2) >= 0x80 && *(from - 2) <= 0x9F) {
+                if (from - 3 >= first) {
+                    if (*(from - 3) == 0xED) {
+                        read_3(); // w[ED, 80..9F, 80..BF]
                     }
-                } else if (*(from - 2) >= 0xE1 && *(from - 2) <= 0xEC) {
-                    replace(2); // i[E1..EC, 80..BF]
-                } else if (*(from - 2) >= 0xEE && *(from - 2) <= 0xEF) {
-                    replace(2); // i[EE..EF, 80..BF]
-                } else if (*(from - 2) >= 0xF1 && *(from - 2) <= 0xF3) {
-                    replace(2); // i[F1..F3, 80..BF]
-                } else if (*(from - 2) >= 0x90 && *(from - 2) <= 0xBF) {
-                    if (from - 3 >= first) {
-                        if (*(from - 3) == 0xF0) {
-                            replace(3); // i[F0, 90..BF, 80..BF]
-                        } else {
-                            replace(1); // i[.]
-                        }
-                    } else {
-                        replace(1); // i[.]
+                }
+            } else if (*(from - 2) >= 0xE1 && *(from - 2) <= 0xEC) {
+                replace(2); // i[E1..EC, 80..BF]
+            } else if (*(from - 2) >= 0xEE && *(from - 2) <= 0xEF) {
+                replace(2); // i[EE..EF, 80..BF]
+            } else if (*(from - 2) >= 0xF1 && *(from - 2) <= 0xF3) {
+                replace(2); // i[F1..F3, 80..BF]
+            } else if (*(from - 2) >= 0x90 && *(from - 2) <= 0xBF) {
+                if (from - 3 >= first) {
+                    if (*(from - 3) == 0xF0) {
+                        replace(3); // i[F0, 90..BF, 80..BF]
                     }
-                } else if (*(from - 2) >= 0x80 && *(from - 2) <= 0x8F) {
-                    if (from - 3 >= first) {
-                        if (*(from - 3) == 0xF4) {
-                            replace(3); // i[F4, 80..8F, 80..BF]
-                        } else {
-                            replace(1); // i[.]
-                        }
-                    } else {
-                        replace(1); // i[.]
+                }
+            } else if (*(from - 2) >= 0x80 && *(from - 2) <= 0x8F) {
+                if (from - 3 >= first) {
+                    if (*(from - 3) == 0xF4) {
+                        replace(3); // i[F4, 80..8F, 80..BF]
                     }
-                } else {
-                    replace(1); // i[.]
                 }
-            } else {
-                replace(1); // i[.]
             }
-        } else if (*(from - 1) >= 0xA0 && *(from - 1) <= 0xBF) {
-            if (from - 2 >= first) {
-                if (*(from - 2) == 0xE0) {
-                    replace(2); // i[E0, A0..BF]
-                } else {
-                    replace(1); // i[.]
-                }
-            } else {
-                replace(1); // i[.]
+        }
+    } else if (*(from - 1) >= 0xA0 && *(from - 1) <= 0xBF) {
+        if (from - 2 >= first) {
+            if (*(from - 2) == 0xE0) {
+                replace(2); // i[E0, A0..BF]
             }
-        } else if (*(from - 1) >= 0x80 && *(from - 1) <= 0x9F) {
-            if (from - 2 >= first) {
-                if (*(from - 2) == 0xED) {
-                    replace(2); // i[ED, 80..9F]
-                } else {
-                    replace(1); // i[.]
-                }
-            } else {
-                replace(1); // i[.]
+        }
+    } else if (*(from - 1) >= 0x80 && *(from - 1) <= 0x9F) {
+        if (from - 2 >= first) {
+            if (*(from - 2) == 0xED) {
+                replace(2); // i[ED, 80..9F]
             }
-        } else if (*(from - 1) >= 0x90 && *(from - 1) <= 0xBF) {
-            if (from - 2 >= first) {
-                if (*(from - 2) == 0xF0) {
-                    replace(2); // i[F0, 90..BF]
-                } else {
-                    replace(1); // i[.]
-                }
-            } else {
-                replace(1); // i[.]
+        }
+    } else if (*(from - 1) >= 0x90 && *(from - 1) <= 0xBF) {
+        if (from - 2 >= first) {
+            if (*(from - 2) == 0xF0) {
+                replace(2); // i[F0, 90..BF]
             }
-        } else if (*(from - 1) >= 0x80 && *(from - 1) <= 0x8F) {
-            if (from - 2 >= first) {
-                if (*(from - 2) == 0xF4) {
-                    replace(2); // i[F4, 80..8F]
-                } else {
-                    replace(1); // i[.]
-                }
-            } else {
-                replace(1); // i[.]
+        }
+    } else if (*(from - 1) >= 0x80 && *(from - 1) <= 0x8F) {
+        if (from - 2 >= first) {
+            if (*(from - 2) == 0xF4) {
+                replace(2); // i[F4, 80..8F]
             }
-        } else {
-            replace(1); // i[C2..DF], i[E0], i[E1..EC], i[ED], i[EE..EF], i[F0], i[F1..F3], i[F4], i[.]
         }
     } else {
-        replace(0); // out of range
+        replace(1); // i[C2..DF], i[E0], i[E1..EC], i[ED], i[EE..EF], i[F0], i[F1..F3], i[F4], i[.]
     }
+
+    replace(1); // i[.]
 
     #undef read_1
     #undef read_2
