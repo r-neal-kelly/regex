@@ -21,5 +21,9 @@ typedef uint8_t     utf_8_t;
 typedef uint16_t    utf_16_t;
 typedef uint32_t    utf_32_t;
 
+bool_t  utf_16_is_surrogate(utf_16_t it);
+bool_t  utf_16_is_high_surrogate(utf_16_t it);
+bool_t  utf_16_is_low_surrogate(utf_16_t it);
+
 bool_t  utf_32_is_point(utf_32_t it);
 bool_t  utf_32_is_scalar_point(utf_32_t it);

@@ -13,8 +13,8 @@ typedef struct string_utf_iterator_t
 {
     word_t      unit_index;
     word_t      point_index;
+    u8_t        read_unit_count;
     bool_t      is_in_reverse;
-    u8_t        unit_sequence_count;
     utf_32_t    point;
 }
 string_utf_iterator_t;
