@@ -37,6 +37,13 @@ int main(int argument_count, char* arguments[])
         u32_t point = string_point(&iter);
         wprintf(L"unit_idx: %zu, point_idx: %zu is %8.8X\n", iter.unit_index, iter.point_index, string_point(&iter));
     }
+    wprintf(L"\n");
+
+    for (string_iterator_t iter = string_end(&string); !string_is_first(&iter); string_previous(&iter)) {
+        u32_t point = string_point(&iter);
+        wprintf(L"unit_idx: %zu, point_idx: %zu is %8.8X\n", iter.unit_index, iter.point_index, string_point(&iter));
+    }
+    wprintf(L"\n");
 
     string_destroy(&string);
 

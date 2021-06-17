@@ -214,27 +214,27 @@ u8_t utf_8_subsequence_create_reverse(utf_8_subsequence_t* it, const utf_8_t* fr
 
     #define read_2()            \
     {                           \
-        it->a = *(from - 1);    \
-        it->b = *(from - 2);    \
+        it->a = *(from - 2);    \
+        it->b = *(from - 1);    \
         it->unit_count = 2;     \
         return 2;               \
     }
 
     #define read_3()            \
     {                           \
-        it->a = *(from - 1);    \
+        it->a = *(from - 3);    \
         it->b = *(from - 2);    \
-        it->c = *(from - 3);    \
+        it->c = *(from - 1);    \
         it->unit_count = 3;     \
         return 3;               \
     }
 
     #define read_4()            \
     {                           \
-        it->a = *(from - 1);    \
-        it->b = *(from - 2);    \
-        it->c = *(from - 3);    \
-        it->d = *(from - 4);    \
+        it->a = *(from - 4);    \
+        it->b = *(from - 3);    \
+        it->c = *(from - 2);    \
+        it->d = *(from - 1);    \
         it->unit_count = 4;     \
         return 4;               \
     }
