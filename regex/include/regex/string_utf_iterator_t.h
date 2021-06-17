@@ -11,10 +11,9 @@ typedef struct string_utf_t string_utf_t;
 
 typedef struct string_utf_iterator_t
 {
-    word_t      unit_index;
-    word_t      point_index;
-    u8_t        read_unit_count;
-    bool_t      is_in_reverse;
-    utf_32_t    point;
+    u8_t    units_read;
+    u32_t   point;
+    word_t  unit_index;
+    word_t  point_index;
 }
 string_utf_iterator_t;

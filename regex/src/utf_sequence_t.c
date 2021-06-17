@@ -52,7 +52,7 @@ Ill-formed Truncated UTF-8 Subsequences:
     This holds true when reading a UTF-8 sequence backwards or forwards.
 */
 
-u8_t utf_8_subsequence_from(utf_8_subsequence_t* it, const utf_8_t* from)
+u8_t utf_8_subsequence_create(utf_8_subsequence_t* it, const utf_8_t* from)
 {
     assert(it);
     assert(from);
@@ -201,7 +201,7 @@ u8_t utf_8_subsequence_from(utf_8_subsequence_t* it, const utf_8_t* from)
     #undef replace
 }
 
-u8_t utf_8_subsequence_from_previous(utf_8_subsequence_t* it, const utf_8_t* from, const utf_8_t* first)
+u8_t utf_8_subsequence_create_reverse(utf_8_subsequence_t* it, const utf_8_t* from, const utf_8_t* first)
 {
     assert(it);
     assert(from);
@@ -454,7 +454,7 @@ void_t utf_8_subsequence_to_32(const utf_8_subsequence_t* it, utf_32_subsequence
     to->unit_count = 1;
 }
 
-u8_t utf_16_subsequence_from(utf_16_subsequence_t* it, const utf_16_t* from, bool_t do_swap)
+u8_t utf_16_subsequence_create(utf_16_subsequence_t* it, const utf_16_t* from, bool_t do_swap)
 {
     assert(it);
     assert(from);
@@ -478,7 +478,7 @@ u8_t utf_16_subsequence_from(utf_16_subsequence_t* it, const utf_16_t* from, boo
     return it->unit_count;
 }
 
-u8_t utf_16_subsequence_from_previous(utf_16_subsequence_t* it, const utf_16_t* from, const utf_16_t* first, bool_t do_swap)
+u8_t utf_16_subsequence_create_reverse(utf_16_subsequence_t* it, const utf_16_t* from, const utf_16_t* first, bool_t do_swap)
 {
     assert(it);
     assert(from);
@@ -551,7 +551,7 @@ void_t utf_16_subsequence_to_32(const utf_16_subsequence_t* it, utf_32_subsequen
     }
 }
 
-u8_t utf_32_subsequence_from(utf_32_subsequence_t* it, const utf_32_t* from, bool_t do_swap)
+u8_t utf_32_subsequence_create(utf_32_subsequence_t* it, const utf_32_t* from, bool_t do_swap)
 {
     assert(it);
     assert(from);
@@ -565,7 +565,7 @@ u8_t utf_32_subsequence_from(utf_32_subsequence_t* it, const utf_32_t* from, boo
     return it->unit_count;
 }
 
-u8_t utf_32_subsequence_from_previous(utf_32_subsequence_t* it, const utf_32_t* from, const utf_32_t* first, bool_t do_swap)
+u8_t utf_32_subsequence_create_reverse(utf_32_subsequence_t* it, const utf_32_t* from, const utf_32_t* first, bool_t do_swap)
 {
     assert(it);
     assert(from);

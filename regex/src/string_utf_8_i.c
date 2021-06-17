@@ -20,15 +20,9 @@ word_t string_utf_8_unit_size()
     return sizeof(utf_8_t);
 }
 
-word_t string_utf_8_max_unit_sequence_count()
-{
-    return 4;
-}
-
 bool_t string_utf_8_has_terminator(const string_utf_t* it)
 {
     assert(it);
-    assert(string_utf_is_valid(it));
     assert(string_utf_interface(it) == string_utf_8_interface());
 
     word_t unit_count = array_unit_count(&it->array);
@@ -36,14 +30,13 @@ bool_t string_utf_8_has_terminator(const string_utf_t* it)
         utf_8_t* last = array_access(&it->array, unit_count - 1);
         return *last == 0;
     } else {
-        return 0;
+        return false;
     }
 }
 
 error_e string_utf_8_terminate(string_utf_t* it)
 {
     assert(it);
-    assert(string_utf_is_valid(it));
     assert(string_utf_interface(it) == string_utf_8_interface());
 
     if (!string_utf_8_has_terminator(it)) {
@@ -58,56 +51,52 @@ error_e string_utf_8_terminate(string_utf_t* it)
     return ERROR_NONE_e;
 }
 
-bool_t string_utf_8_point_ahead(const string_utf_t* it, word_t index, u32_t* out_point, u8_t* out_sequence_count)
+word_t string_utf_8_terminator_unit_index(const string_utf_t* it)
 {
     assert(it);
+    assert(string_utf_interface(it) == string_utf_8_interface());
+    assert(string_utf_8_has_terminator(it));
+
+    return array_unit_count(&it->array) - 1;
+}
+
+void_t string_utf_8_read(const string_utf_t* it, word_t unit_index, u8_t* out_units_read, utf_32_t* out_point)
+{
+    assert(it);
+    assert(out_units_read);
     assert(out_point);
-    assert(out_sequence_count);
-    assert(string_utf_is_valid(it));
-    assert(index < string_utf_unit_count(it));
+    assert(string_utf_interface(it) == string_utf_8_interface());
+    assert(unit_index < it->array.unit_count);
 
-    utf_sequence_8_t from;
-    *out_sequence_count = utf_sequence_8_read_ahead(&from, array_access(&it->array, index));
+    utf_8_subsequence_t from;
+    utf_32_subsequence_t to;
 
-    utf_sequence_32_t to;
-    utf_sequence_8_to_32(&from, &to);
+    *out_units_read = utf_8_subsequence_create(
+        &from,
+        array_access(&it->array, unit_index)
+    );
+    
+    utf_8_subsequence_to_32(&from, &to);
     *out_point = to.a;
 }
 
-void_t string_utf_8_first(const string_utf_t* it, string_utf_iterator_t* iterator)
+void_t string_utf_8_read_reverse(const string_utf_t* it, word_t unit_index, u8_t* out_units_read, utf_32_t* out_point)
 {
     assert(it);
-    assert(iterator);
-    assert(string_utf_is_valid(it));
+    assert(out_units_read);
+    assert(out_point);
+    assert(string_utf_interface(it) == string_utf_8_interface());
+    assert(unit_index > 0 && unit_index <= it->array.unit_count);
 
-    iterator->unit_index = 0;
-    iterator->point_index = 0;
-    iterator->is_in_reverse = false;
+    utf_8_subsequence_t from;
+    utf_32_subsequence_t to;
 
-    utf_sequence_8_t from;
-    iterator->unit_sequence_count = utf_sequence_8_read(&from, array_access(&it->array, iterator->unit_index));
+    *out_units_read = utf_8_subsequence_create_reverse(
+        &from,
+        array_access(&it->array, unit_index),
+        array_access(&it->array, 0)
+    );
 
-    utf_sequence_32_t to;
-    utf_sequence_8_to_32(&from, &to);
-    iterator->point = to.a;
-}
-
-void_t string_utf_8_last(const string_utf_t* it, string_utf_iterator_t* iterator)
-{
-
-}
-
-void_t string_utf_8_end(const string_utf_t* it, string_utf_iterator_t* iterator)
-{
-
-}
-
-bool_t string_utf_8_next(const string_utf_t* it, string_utf_iterator_t* iterator)
-{
-
-}
-
-bool_t string_utf_8_previous(const string_utf_t* it, string_utf_iterator_t* iterator)
-{
-
+    utf_8_subsequence_to_32(&from, &to);
+    *out_point = to.a;
 }

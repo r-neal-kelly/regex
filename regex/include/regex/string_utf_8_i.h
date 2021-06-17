@@ -10,14 +10,15 @@
 extern string_utf_i STRING_UTF_8_i;
 
 string_utf_i*   string_utf_8_interface();
+
 word_t          string_utf_8_unit_size();
-word_t          string_utf_8_max_unit_sequence_count();
 
 bool_t          string_utf_8_has_terminator(const string_utf_t* it);
 error_e         string_utf_8_terminate(string_utf_t* it);
+word_t          string_utf_8_terminator_unit_index(const string_utf_t* it);
 
-bool_t          string_utf_8_point_ahead(const string_utf_t* it, word_t index, u32_t* out_point, u8_t* out_sequence_count);
-bool_t          string_utf_8_point_behind(const string_utf_t* it, word_t index, u32_t* out_point, u8_t* out_sequence_count);
+void_t          string_utf_8_read(const string_utf_t* it, word_t unit_index, u8_t* out_units_read, utf_32_t* out_point);
+void_t          string_utf_8_read_reverse(const string_utf_t* it, word_t unit_index, u8_t* out_units_read, utf_32_t* out_point);
 
 bool_t          string_utf_8_join(string_utf_t* it, const string_utf_t* other); // this will check if they are the same type for efficiency
 

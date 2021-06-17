@@ -38,7 +38,6 @@ word_t                  string_utf_unit_count(const string_utf_t* it);
 word_t                  string_utf_unit_length(const string_utf_t* it);
 word_t                  string_utf_point_count(const string_utf_t* it);
 word_t                  string_utf_point_length(const string_utf_t* it);
-word_t                  string_utf_max_unit_sequence_count(const string_utf_t* it);
 
 void_t                  string_utf_clear(string_utf_t* it);
 

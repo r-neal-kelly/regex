@@ -121,14 +121,6 @@ word_t string_utf_point_length(const string_utf_t* it)
     return it->point_count - 1;
 }
 
-word_t string_utf_max_unit_sequence_count(const string_utf_t* it)
-{
-    assert(it);
-    assert(string_utf_is_valid(it));
-
-    return it->interface->max_unit_sequence_count();
-}
-
 void_t string_utf_clear(string_utf_t* it)
 {
     assert(it);
@@ -147,7 +139,9 @@ string_utf_iterator_t string_utf_first(const string_utf_t* it)
     assert(string_utf_is_valid(it));
 
     string_utf_iterator_t iterator;
-    it->interface->first(it, &iterator);
+    it->interface->read(it, 0, &iterator.units_read, &iterator.point);
+    iterator.unit_index = 0;
+    iterator.point_index = 0;
 
     return iterator;
 }
@@ -156,10 +150,13 @@ string_utf_iterator_t string_utf_last(const string_utf_t* it)
 {
     assert(it);
     assert(string_utf_is_valid(it));
-    assert(string_utf_unit_count(it) > 1);
+    assert(string_utf_unit_length(it) > 0);
 
     string_utf_iterator_t iterator;
-    it->interface->last(it, &iterator);
+    word_t terminator_unit_index = it->interface->terminator_unit_index(it);
+    it->interface->read_reverse(it, terminator_unit_index, &iterator.units_read, &iterator.point);
+    iterator.unit_index = terminator_unit_index - iterator.units_read;
+    iterator.point_index = string_utf_point_length(it) - 1;
 
     return iterator;
 }
@@ -170,7 +167,10 @@ string_utf_iterator_t string_utf_end(const string_utf_t* it)
     assert(string_utf_is_valid(it));
 
     string_utf_iterator_t iterator;
-    it->interface->end(it, &iterator);
+    word_t terminator_unit_index = it->interface->terminator_unit_index(it);
+    it->interface->read(it, terminator_unit_index, &iterator.units_read, &iterator.point);
+    iterator.unit_index = terminator_unit_index;
+    iterator.point_index = string_utf_point_length(it);
 
     return iterator;
 }
@@ -178,21 +178,37 @@ string_utf_iterator_t string_utf_end(const string_utf_t* it)
 bool_t string_utf_next(const string_utf_t* it, string_utf_iterator_t* iterator)
 {
     assert(it);
-    assert(iter);
+    assert(iterator);
     assert(string_utf_is_valid(it));
     assert(string_utf_is_valid_iterator(it, iterator));
 
-    return it->interface->next(it, iterator);
+    if (!string_utf_is_end(it, iterator)) {
+        iterator->unit_index += iterator->units_read;
+        iterator->point_index += 1;
+        it->interface->read(it, iterator->unit_index, &iterator->units_read, &iterator->point);
+
+        return true;
+    } else {
+        return false;
+    }
 }
 
 bool_t string_utf_previous(const string_utf_t* it, string_utf_iterator_t* iterator)
 {
     assert(it);
-    assert(iter);
+    assert(iterator);
     assert(string_utf_is_valid(it));
     assert(string_utf_is_valid_iterator(it, iterator));
 
-    return it->interface->previous(it, iterator);
+    if (!string_utf_is_first(it, iterator)) {
+        it->interface->read_reverse(it, iterator->unit_index, &iterator->units_read, &iterator->point);
+        iterator->unit_index -= iterator->units_read;
+        iterator->point_index -= 1;
+
+        return true;
+    } else {
+        return false;
+    }
 }
 
 bool_t string_utf_is_first(const string_utf_t* it, const string_utf_iterator_t* iterator)
@@ -212,7 +228,7 @@ bool_t string_utf_is_last(const string_utf_t* it, const string_utf_iterator_t* i
     assert(string_utf_is_valid(it));
     assert(string_utf_is_valid_iterator(it, iterator));
 
-    return iterator->unit_index + iterator->unit_sequence_count == array_unit_count(&it->array);
+    return iterator->unit_index + iterator->units_read == it->interface->terminator_unit_index(it);
 }
 
 bool_t string_utf_is_end(const string_utf_t* it, const string_utf_iterator_t* iterator)
@@ -222,7 +238,7 @@ bool_t string_utf_is_end(const string_utf_t* it, const string_utf_iterator_t* it
     assert(string_utf_is_valid(it));
     assert(string_utf_is_valid_iterator(it, iterator));
 
-    return iterator->unit_index == array_unit_count(&it->array);
+    return iterator->unit_index == it->interface->terminator_unit_index(it);
 }
 
 bool_t string_utf_is_valid_iterator(const string_utf_t* it, const string_utf_iterator_t* iterator)
@@ -231,15 +247,10 @@ bool_t string_utf_is_valid_iterator(const string_utf_t* it, const string_utf_ite
     assert(iterator);
 
     if (string_utf_is_valid(it) &&
-        iterator->unit_index <= string_utf_unit_count(it) &&
-        iterator->point_index <= string_utf_point_count(it) &&
-        utf_32_is_scalar_point(iterator->point) &&
-        iterator->unit_sequence_count < string_utf_max_unit_sequence_count(it)) {
-        if (iterator->is_in_reverse) {
-            return iterator->unit_index >= iterator->unit_sequence_count;
-        } else {
-            return string_utf_unit_count(it) - iterator->unit_index >= iterator->unit_sequence_count;
-        }
+        iterator->unit_index <= it->interface->terminator_unit_index(it) &&
+        iterator->point_index <= string_utf_point_length(it) &&
+        utf_32_is_scalar_point(iterator->point)) {
+        return true;
     } else {
         return false;
     }
