@@ -26,6 +26,8 @@ word_t  array_capacity(const array_t* it);
 bool_t  array_should_grow(const array_t* it);
 error_e array_grow(array_t* it);
 
+void_t* array_bytes(const array_t* it);
+
 word_t  array_unit_size(const array_t* it);
 word_t  array_unit_count(const array_t* it);
 

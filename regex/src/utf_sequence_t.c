@@ -8,9 +8,6 @@
 #include "regex/os.h"
 #include "regex/utf_sequence_t.h"
 
-#define BYTE_ORDER_MARKER       0x0000FEFF
-#define REPLACEMENT_CHARACTER   0x0000FFFD
-
 /*
 Well-formed UTF-8 Subsequences:
     00..7F
@@ -465,11 +462,11 @@ u8_t utf_16_subsequence_create(utf_16_subsequence_t* it, const utf_16_t* from, b
         if (utf_16_is_low_surrogate(it->b)) {
             it->unit_count = 2;
         } else {
-            it->a = REPLACEMENT_CHARACTER;
+            it->a = UTF_REPLACEMENT_CHARACTER;
             it->unit_count = 1;
         }
     } else if (utf_16_is_low_surrogate(it->a)) {
-        it->a = REPLACEMENT_CHARACTER;
+        it->a = UTF_REPLACEMENT_CHARACTER;
         it->unit_count = 1;
     } else {
         it->unit_count = 1;
@@ -494,15 +491,15 @@ u8_t utf_16_subsequence_create_reverse(utf_16_subsequence_t* it, const utf_16_t*
                 it->b = read_a;
                 it->unit_count = 2;
             } else {
-                it->a = REPLACEMENT_CHARACTER;
+                it->a = UTF_REPLACEMENT_CHARACTER;
                 it->unit_count = 1;
             }
         } else {
-            it->a = REPLACEMENT_CHARACTER;
+            it->a = UTF_REPLACEMENT_CHARACTER;
             it->unit_count = 1;
         }
     } else if (utf_16_is_high_surrogate(read_a)) {
-        it->a = REPLACEMENT_CHARACTER;
+        it->a = UTF_REPLACEMENT_CHARACTER;
         it->unit_count = 1;
     } else {
         it->a = read_a;
@@ -558,7 +555,7 @@ u8_t utf_32_subsequence_create(utf_32_subsequence_t* it, const utf_32_t* from, b
 
     it->a = do_swap ? os_swap_bytes_u32(*from) : *from;
     if (!utf_32_is_scalar_point(it->a)) {
-        it->a = REPLACEMENT_CHARACTER;
+        it->a = UTF_REPLACEMENT_CHARACTER;
     }
     it->unit_count = 1;
 
@@ -574,7 +571,7 @@ u8_t utf_32_subsequence_create_reverse(utf_32_subsequence_t* it, const utf_32_t*
 
     it->a = do_swap ? os_swap_bytes_u32(*(from - 1)) : *(from - 1);
     if (!utf_32_is_scalar_point(it->a)) {
-        it->a = REPLACEMENT_CHARACTER;
+        it->a = UTF_REPLACEMENT_CHARACTER;
     }
     it->unit_count = 1;
 

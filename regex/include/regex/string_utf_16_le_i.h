@@ -5,17 +5,20 @@
 #pragma once
 
 #include "regex/intrinsic.h"
-#include "regex/string_utf_i.h"
+#include "regex/string_i.h"
 
-extern string_utf_i STRING_UTF_16_LE_i;
+extern string_i STRING_UTF_16_LE_i;
 
-string_utf_i*   string_utf_16_le_interface();
+string_i*   string_utf_16_le_interface();
 
-word_t          string_utf_16_le_unit_size();
+word_t      string_utf_16_le_unit_size();
 
-bool_t          string_utf_16_le_has_terminator(const string_utf_t* it);
-error_e         string_utf_16_le_terminate(string_utf_t* it);
-word_t          string_utf_16_le_terminator_unit_index(const string_utf_t* it);
+void_t      string_utf_16_le_read(const void_t* raw, word_t unit_index, string_subsequence_t* result);
+void_t      string_utf_16_le_read_reverse(const void_t* raw, word_t unit_index, string_subsequence_t* result);
+u32_t       string_utf_16_le_point(const string_subsequence_t* subsequence);
 
-void_t          string_utf_16_le_read(const string_utf_t* it, word_t unit_index, u8_t* out_units_read, utf_32_t* out_point);
-void_t          string_utf_16_le_read_reverse(const string_utf_t* it, word_t unit_index, u8_t* out_units_read, utf_32_t* out_point);
+bool_t      string_utf_16_le_has_terminator(const string_t* it);
+error_e     string_utf_16_le_terminate(string_t* it);
+word_t      string_utf_16_le_terminator_unit_index(const string_t* it);
+
+error_e     string_utf_16_le_push_point(string_t* it, u32_t point);

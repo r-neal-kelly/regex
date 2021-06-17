@@ -4,12 +4,13 @@
 
 #include <assert.h>
 
-#include "regex/string_utf_t.h"
+#include "regex/string_t.h"
 #include "regex/string_utf_16_le_i.h"
+#include "regex/utf.h"
 
-string_utf_i STRING_UTF_16_LE_i = DEFINE_STRING_UTF_i(string_utf_16_le);
+//string_i STRING_UTF_16_LE_i = DEFINE_STRING_i(string_utf_16_le);
 
-string_utf_i* string_utf_16_le_interface()
+string_i* string_utf_16_le_interface()
 {
     return &STRING_UTF_16_LE_i;
 }

@@ -107,6 +107,14 @@ error_e array_grow(array_t* it)
     return memory_reserve(&it->memory, reserve_byte_count);
 }
 
+void_t* array_bytes(const array_t* it)
+{
+    assert(it);
+    assert(array_is_valid(it));
+
+    return it->memory.pointer.bytes;
+}
+
 word_t array_unit_size(const array_t* it)
 {
     assert(it);
