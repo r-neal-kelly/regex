@@ -15,6 +15,8 @@
 #include "regex/string_t.h"
 #include "regex/string_utf_8_i.h"
 
+#include "pointer_t.h"
+
 int main(int argument_count, char* arguments[])
 {
     if (_setmode(_fileno(stdin), _O_U16TEXT) == -1) {
@@ -23,6 +25,8 @@ int main(int argument_count, char* arguments[])
     if (_setmode(_fileno(stdout), _O_U16TEXT) == -1) {
         assert(0);
     }
+
+    test_pointer();
 
     string_t string;
     string_create_with_raw(&string, &STRING_UTF_8_i, u8"test.νηαλ", &STRING_UTF_8_i, &CALLOCATOR, 16, 1.5f);

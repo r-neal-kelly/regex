@@ -11,8 +11,7 @@
     This interface requires that your decoded points be able to fit in a u32.
     Also, your string_subsequence_t must fit within a u56, with the last 8 bits
     reserved for the units that are consumed by your read procedure.
-    You should not validate the string_t when it's passed to your functions as it may recurse.
-    Validating that the string_t has the correct interface is always okay.
+    It is generally not safe to call the derived functions, as there may be infinite recursion.
 */
 
 typedef struct string_i             string_i;

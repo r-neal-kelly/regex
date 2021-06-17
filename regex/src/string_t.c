@@ -272,8 +272,8 @@ bool_t string_is_valid_iterator(const string_iterator_t* it)
 
     if (it->owner &&
         string_is_valid(it->owner) &&
-        it->unit_index <= it->owner->interface->terminator_unit_index(it->owner) &&
-        it->point_index <= string_point_length(it->owner)) {
+        it->unit_index <= string_unit_count(it->owner) &&
+        it->point_index <= string_point_count(it->owner)) {
         return true;
     } else {
         return false;

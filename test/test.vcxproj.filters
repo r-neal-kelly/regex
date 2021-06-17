@@ -19,4 +19,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\pointer_t.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\intrinsic.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
 </Project>

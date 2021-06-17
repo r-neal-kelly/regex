@@ -57,7 +57,6 @@ u32_t string_utf_8_point(const string_subsequence_t* subsequence)
 bool_t string_utf_8_has_terminator(const string_t* it)
 {
     assert(it);
-    assert(string_interface(it) == string_utf_8_interface());
 
     word_t unit_count = array_unit_count(&it->array);
     if (unit_count > 0) {
@@ -71,7 +70,6 @@ bool_t string_utf_8_has_terminator(const string_t* it)
 error_e string_utf_8_terminate(string_t* it)
 {
     assert(it);
-    assert(string_interface(it) == string_utf_8_interface());
 
     if (!string_utf_8_has_terminator(it)) {
         utf_8_t terminator = 0;
@@ -88,7 +86,6 @@ error_e string_utf_8_terminate(string_t* it)
 word_t string_utf_8_terminator_unit_index(const string_t* it)
 {
     assert(it);
-    assert(string_interface(it) == string_utf_8_interface());
     assert(string_utf_8_has_terminator(it));
 
     return array_unit_count(&it->array) - 1;
@@ -114,7 +111,6 @@ static error_e _string_utf_8_push_sequence(string_t* it, utf_8_subsequence_t* se
 error_e string_utf_8_push_point(string_t* it, u32_t point)
 {
     assert(it);
-    assert(string_interface(it) == string_utf_8_interface());
 
     if (point != 0) {
         if (!utf_32_is_scalar_point(point)) {
@@ -150,7 +146,6 @@ error_e string_utf_8_push_raw(string_t* it, const void_t* raw, string_i* raw_int
     assert(it);
     assert(raw);
     assert(raw_interface);
-    assert(string_interface(it) == string_utf_8_interface());
 
     error_e error;
 
