@@ -29,7 +29,7 @@ int main(int argument_count, char* arguments[])
     test_pointer();
 
     string_t string;
-    string_create_with_raw(&string, &STRING_UTF_8_i, u8"test.νηαλ", &STRING_UTF_8_i, &CALLOCATOR, 16, 1.5f);
+    string_create_with_raw(&string, &STRING_UTF_8_i, u8"neal.νηαλ.נהאל", &STRING_UTF_8_i, &CALLOCATOR, 16, 1.5f);
 
     wprintf(L"string unit_count: %zu\n", string_unit_count(&string));
     wprintf(L"string point_count: %zu\n", string_point_count(&string));
