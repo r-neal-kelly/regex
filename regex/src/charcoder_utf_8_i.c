@@ -4,19 +4,19 @@
 
 #include <assert.h>
 
+#include "regex/charcoder_utf_8_i.h"
 #include "regex/string_t.h"
-#include "regex/string_utf_8_i.h"
 #include "regex/utf.h"
 #include "regex/utf_sequence_t.h"
 
-string_i STRING_UTF_8_i = DEFINE_STRING_i(string_utf_8);
+charcoder_i CHARCODER_UTF_8_i = DEFINE_CHARCODER_i(charcoder_utf_8);
 
-word_t string_utf_8_unit_size()
+word_t charcoder_utf_8_unit_size()
 {
     return sizeof(utf_8_t);
 }
 
-void_t string_utf_8_read_forward(const void_t* at, string_subsequence_t* result)
+void_t charcoder_utf_8_read_forward(const void_t* at, string_subsequence_t* result)
 {
     assert(at);
     assert(result);
@@ -27,7 +27,7 @@ void_t string_utf_8_read_forward(const void_t* at, string_subsequence_t* result)
     );
 }
 
-void_t string_utf_8_read_reverse(const void_t* from, const void_t* first, string_subsequence_t* result)
+void_t charcoder_utf_8_read_reverse(const void_t* from, const void_t* first, string_subsequence_t* result)
 {
     assert(from);
     assert(first);
@@ -41,7 +41,7 @@ void_t string_utf_8_read_reverse(const void_t* from, const void_t* first, string
     );
 }
 
-void_t string_utf_8_to_point(const string_subsequence_t* subsequence, u32_t* result)
+void_t charcoder_utf_8_to_point(const string_subsequence_t* subsequence, u32_t* result)
 {
     assert(subsequence);
     assert(result);
@@ -51,7 +51,7 @@ void_t string_utf_8_to_point(const string_subsequence_t* subsequence, u32_t* res
     *result = to.a;
 }
 
-void_t string_utf_8_to_subsequence(u32_t point, string_subsequence_t* result)
+void_t charcoder_utf_8_to_subsequence(u32_t point, string_subsequence_t* result)
 {
     assert(point);
     assert(result);

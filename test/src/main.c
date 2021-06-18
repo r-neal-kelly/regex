@@ -11,9 +11,10 @@
 #include "regex/allocator_t.h"
 #include "regex/array_t.h"
 #include "regex/callocator_t.h"
+#include "regex/charcoder_utf_8_i.h"
+#include "regex/init.h"
 #include "regex/intrinsic.h"
 #include "regex/string_t.h"
-#include "regex/string_utf_8_i.h"
 
 #include "pointer_t.h"
 
@@ -26,10 +27,12 @@ int main(int argument_count, char* arguments[])
         assert(0);
     }
 
+    init();
+
     test_pointer();
 
     string_t string;
-    string_create_with_raw(&string, &STRING_UTF_8_i, u8"neal.νηαλ.נהאל", &STRING_UTF_8_i, &CALLOCATOR, 16, 1.5f);
+    string_create_with_raw(&string, &CHARCODER_UTF_8_i, u8"neal.νηαλ.נהאל", &CHARCODER_UTF_8_i, &CALLOCATOR, 16, 1.5f);
 
     wprintf(L"string unit_count: %zu\n", string_unit_count(&string));
     wprintf(L"string point_count: %zu\n", string_point_count(&string));

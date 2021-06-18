@@ -45,31 +45,34 @@
     <ClInclude Include="include\regex\utf_sequence_t.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\regex\string_utf_8_i.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\regex\string_utf_16_le_i.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\regex\string_utf_16_be_i.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\regex\string_utf_32_le_i.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\regex\string_utf_32_be_i.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\regex\error_e.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\regex\utf.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\regex\string_i.h">
+    <ClInclude Include="include\regex\string_t.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\regex\string_t.h">
+    <ClInclude Include="include\regex\init.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\regex\charcoder_i.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\regex\charcoder_utf_8_i.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\regex\charcoder_utf_16_be_i.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\regex\charcoder_utf_16_le_i.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\regex\charcoder_utf_32_be_i.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\regex\charcoder_utf_32_le_i.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -98,25 +101,28 @@
     <ClCompile Include="src\utf_sequence_t.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\string_utf_8_i.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\string_utf_16_le_i.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\string_utf_16_be_i.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\string_utf_32_le_i.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\string_utf_32_be_i.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\utf.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\string_t.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\init.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\charcoder_utf_8_i.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\charcoder_utf_16_be_i.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\charcoder_utf_16_le_i.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\charcoder_utf_32_be_i.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\charcoder_utf_32_le_i.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

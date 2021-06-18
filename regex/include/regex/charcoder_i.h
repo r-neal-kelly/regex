@@ -16,12 +16,12 @@
     The string_subsequence_t itself must have the unit subsequence in order at the beginning of the struct.
     The lingua franca for decoded points is Unicode. Meaning if you wish to communicate with unknown interfaces,
     you need to be able to receive and send a Unicode point, converting it to your point before encoding.
-    It is generally not safe to call functions in string_t, as there may be infinite recursion.
+    Although not necessarily important for encoding, the string_t always uses a null-terminated unit.
 */
 
 typedef struct string_subsequence_t string_subsequence_t;
 
-typedef struct string_i
+typedef struct charcoder_i
 {
     word_t  (* const unit_size)();
 
@@ -31,9 +31,9 @@ typedef struct string_i
     void_t  (* const to_point)(const string_subsequence_t* subsequence, u32_t* result);
     void_t  (* const to_subsequence)(u32_t point, string_subsequence_t* result);
 }
-string_i;
+charcoder_i;
 
-#define DEFINE_STRING_i(LABEL_LEAD_)    \
+#define DEFINE_CHARCODER_i(LABEL_LEAD_) \
 {                                       \
     &LABEL_LEAD_ ## _unit_size,         \
                                         \

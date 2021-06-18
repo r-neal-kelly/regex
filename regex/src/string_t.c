@@ -4,9 +4,9 @@
 
 #include <assert.h>
 
+#include "regex/charcoder_i.h"
 #include "regex/os.h"
 #include "regex/utf_sequence_t.h"
-#include "regex/string_i.h"
 #include "regex/string_t.h"
 
 static bool_t string_has_null(const string_t* it)
@@ -16,7 +16,7 @@ static bool_t string_has_null(const string_t* it)
     word_t unit_count = array_unit_count(&it->array);
     if (unit_count > 0) {
         byte_t* byte = array_access(&it->array, unit_count - 1);
-        for (word_t idx = 0, end = it->interface->unit_size(); idx < end; idx += 1) {
+        for (word_t idx = 0, end = it->charcoder->unit_size(); idx < end; idx += 1) {
             if (byte[idx] != 0) {
                 return false;
             }
@@ -38,7 +38,7 @@ static error_e string_push_null(string_t* it)
             return error;
         }
 
-        word_t unit_size = it->interface->unit_size();
+        word_t unit_size = it->charcoder->unit_size();
         byte_t* bytes = (byte_t*)array_raw(&it->array) + ((array_unit_count(&it->array) - 1) * unit_size);
         for (word_t idx = 0, end = unit_size; idx < end; idx += 1) {
             bytes[idx] = 0;
@@ -85,39 +85,39 @@ static error_e string_push_subsequence(string_t* it, const string_subsequence_t*
 }
 
 error_e string_create(string_t* it,
-                      string_i* interface,
+                      charcoder_i* charcoder,
                       allocator_i* allocator,
                       word_t reserve_unit_count,
                       float_t grow_rate)
 {
     assert(it);
-    assert(interface);
+    assert(charcoder);
     assert(allocator);
     assert(reserve_unit_count > 0);
 
     error_e error;
 
     it->point_count = 0;
-    it->interface = interface;
+    it->charcoder = charcoder;
 
     error = array_create(
         &it->array,
         allocator,
-        it->interface->unit_size(),
+        it->charcoder->unit_size(),
         reserve_unit_count,
         1,
         grow_rate
     );
     if (error) {
         it->point_count = 0;
-        it->interface = 0;
+        it->charcoder = 0;
         return error;
     }
 
     error = string_push_null(it);
     if (error) {
         it->point_count = 0;
-        it->interface = 0;
+        it->charcoder = 0;
         return error;
     }
 
@@ -125,73 +125,53 @@ error_e string_create(string_t* it,
 }
 
 error_e string_create_with_raw(string_t* it,
-                               string_i* interface,
+                               charcoder_i* charcoder,
                                const void_t* raw,
-                               string_i* raw_interface,
+                               charcoder_i* raw_charcoder,
                                allocator_i* allocator,
                                word_t reserve_unit_count,
                                float_t grow_rate)
 {
     assert(it);
-    assert(interface);
+    assert(charcoder);
     assert(raw);
-    assert(raw_interface);
+    assert(raw_charcoder);
     assert(allocator);
 
     error_e error;
 
-    error = string_create(it, interface, allocator, reserve_unit_count, grow_rate);
+    error = string_create(it, charcoder, allocator, reserve_unit_count, grow_rate);
     if (error) {
         return error;
     }
 
-    return string_push_raw(it, raw, raw_interface);
+    return string_push_raw(it, raw, raw_charcoder);
 }
-
-/*error_e string_copy(string_t* it, const string_t* other, allocator_i* allocator, float_t grow_rate)
-{
-    assert(it);
-    assert(other);
-    assert(allocator);
-    assert(string_is_valid(other));
-
-    it->interface = other->interface;
-
-    error_e error = array_create(&it->array, allocator, it->interface->unit_size(), string_unit_count(other), grow_rate);
-    if (error) {
-        return error;
-    }
-
-    //it->interface.copy(it, other); // we may be able to do this on this level now that we have the iterator
-
-    return ERROR_NONE_e;
-}*/
 
 void_t string_destroy(string_t* it)
 {
     assert(it);
-
-    it->interface = 0;
 
     if (array_is_valid(&it->array)) {
         array_destroy(&it->array);
     }
 
     it->point_count = 0;
+    it->charcoder = 0;
 }
 
 bool_t string_is_valid(const string_t* it)
 {
     assert(it);
 
-    return array_is_valid(&it->array) && it->point_count > 0 && it->interface && string_has_null(it);
+    return array_is_valid(&it->array) && it->point_count > 0 && it->charcoder && string_has_null(it);
 }
 
-string_i* string_interface(const string_t* it)
+charcoder_i* string_charcoder(const string_t* it)
 {
     assert(it);
 
-    return it->interface;
+    return it->charcoder;
 }
 
 byte_t* string_raw(const string_t* it)
@@ -224,7 +204,7 @@ word_t string_unit_size(const string_t* it)
 {
     assert(it);
 
-    return it->interface->unit_size();
+    return it->charcoder->unit_size();
 }
 
 word_t string_unit_count(const string_t* it)
@@ -268,7 +248,7 @@ error_e string_push_point(string_t* it, u32_t point)
     string_pop_null(it);
 
     string_subsequence_t subsequence;
-    it->interface->to_subsequence(point, &subsequence);
+    it->charcoder->to_subsequence(point, &subsequence);
 
     error = string_push_subsequence(it, &subsequence);
     if (error) {
@@ -284,21 +264,21 @@ error_e string_push_point(string_t* it, u32_t point)
     return ERROR_NONE_e;
 }
 
-error_e string_push_raw(string_t* it, const void_t* raw, string_i* raw_interface)
+error_e string_push_raw(string_t* it, const void_t* raw, charcoder_i* raw_charcoder)
 {
     assert(it);
     assert(raw);
-    assert(raw_interface);
+    assert(raw_charcoder);
 
     error_e error;
 
     string_pop_null(it);
 
-    if (raw_interface == string_interface(it)) {
+    if (raw_charcoder == string_charcoder(it)) {
         word_t unit_size = string_unit_size(it);
         string_subsequence_t subsequence;
         for (; !string_has_null(it); (byte_t*)raw += subsequence.units_read * unit_size) {
-            raw_interface->read_forward(raw, &subsequence);
+            raw_charcoder->read_forward(raw, &subsequence);
             error = string_push_subsequence(it, &subsequence);
             if (error) {
                 string_push_null(it);
@@ -310,9 +290,9 @@ error_e string_push_raw(string_t* it, const void_t* raw, string_i* raw_interface
         string_subsequence_t subsequence;
         u32_t point;
         for (; !string_has_null(it); (byte_t*)raw += subsequence.units_read * unit_size) {
-            raw_interface->read_forward(raw, &subsequence);
-            raw_interface->to_point(&subsequence, &point);
-            it->interface->to_subsequence(point, &subsequence);
+            raw_charcoder->read_forward(raw, &subsequence);
+            raw_charcoder->to_point(&subsequence, &point);
+            it->charcoder->to_subsequence(point, &subsequence);
             error = string_push_subsequence(it, &subsequence);
             if (error) {
                 string_push_null(it);
@@ -343,7 +323,7 @@ string_itr string_first(const string_t* it)
     iterator.owner = it;
 
     byte_t* byte_pointer = string_raw(it);
-    it->interface->read_forward(byte_pointer, &iterator.subsequence);
+    it->charcoder->read_forward(byte_pointer, &iterator.subsequence);
     iterator.byte_pointer = byte_pointer;
     iterator.point_index = 0;
 
@@ -359,7 +339,7 @@ string_itr string_last(const string_t* it)
     iterator.owner = it;
 
     byte_t* byte_pointer = string_raw_null(it);
-    it->interface->read_reverse(byte_pointer, string_raw(it), &iterator.subsequence);
+    it->charcoder->read_reverse(byte_pointer, string_raw(it), &iterator.subsequence);
     iterator.byte_pointer = byte_pointer - iterator.subsequence.units_read * string_unit_size(it);
     iterator.point_index = string_point_length(it) - 1;
 
@@ -374,7 +354,7 @@ string_itr string_null(const string_t* it)
     iterator.owner = it;
 
     byte_t* byte_pointer = string_raw_null(it);
-    it->interface->read_forward(byte_pointer, &iterator.subsequence);
+    it->charcoder->read_forward(byte_pointer, &iterator.subsequence);
     iterator.byte_pointer = byte_pointer;
     iterator.point_index = string_point_count(it) - 1;
 
@@ -423,7 +403,7 @@ bool_t string_itr_next(string_itr* it)
     if (!string_itr_is_postfix(it)) {
         it->byte_pointer += it->subsequence.units_read * string_unit_size(it->owner);
         it->point_index += 1;
-        it->owner->interface->read_forward(it->byte_pointer, &it->subsequence);
+        it->owner->charcoder->read_forward(it->byte_pointer, &it->subsequence);
         return true;
     } else {
         return false;
@@ -436,7 +416,7 @@ bool_t string_itr_previous(string_itr* it)
 
     if (!string_itr_is_prefix(it)) {
         if (it->byte_pointer != string_raw(it->owner)) {
-            it->owner->interface->read_reverse(it->byte_pointer, string_raw(it->owner), &it->subsequence);
+            it->owner->charcoder->read_reverse(it->byte_pointer, string_raw(it->owner), &it->subsequence);
             it->byte_pointer -= it->subsequence.units_read * string_unit_size(it->owner);
             it->point_index -= 1;
         } else {
@@ -456,7 +436,7 @@ u32_t string_itr_point(const string_itr* it)
     assert(!string_itr_is_postfix(it));
 
     u32_t point;
-    it->owner->interface->to_point(&it->subsequence, &point);
+    it->owner->charcoder->to_point(&it->subsequence, &point);
     return point;
 }
 
