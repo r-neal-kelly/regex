@@ -33,6 +33,7 @@ int main(int argument_count, char* arguments[])
 
     wprintf(L"string unit_count: %zu\n", string_unit_count(&string));
     wprintf(L"string point_count: %zu\n", string_point_count(&string));
+    wprintf(L"\n");
 
     for (string_itr itr = string_first(&string); !string_itr_is_postfix(&itr); string_itr_next(&itr)) {
         wprintf(L"unit_idx: %zu, point_idx: %zu is %8.8X\n",
@@ -43,6 +44,22 @@ int main(int argument_count, char* arguments[])
     wprintf(L"\n");
 
     for (string_itr itr = string_null(&string); !string_itr_is_prefix(&itr); string_itr_previous(&itr)) {
+        wprintf(L"unit_idx: %zu, point_idx: %zu is %8.8X\n",
+                string_itr_unit_index(&itr),
+                string_itr_point_index(&itr),
+                string_itr_point(&itr));
+    }
+    wprintf(L"\n");
+
+    for (string_itr itr = string_first(&string); !string_itr_is_null(&itr); string_itr_next(&itr)) {
+        wprintf(L"unit_idx: %zu, point_idx: %zu is %8.8X\n",
+                string_itr_unit_index(&itr),
+                string_itr_point_index(&itr),
+                string_itr_point(&itr));
+    }
+    wprintf(L"\n");
+
+    for (string_itr itr = string_last(&string); !string_itr_is_prefix(&itr); string_itr_previous(&itr)) {
         wprintf(L"unit_idx: %zu, point_idx: %zu is %8.8X\n",
                 string_itr_unit_index(&itr),
                 string_itr_point_index(&itr),

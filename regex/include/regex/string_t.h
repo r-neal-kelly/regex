@@ -70,6 +70,7 @@ string_itr  string_null(const string_t* it);
 
 bool_t      string_itr_is_valid(const string_itr* it);
 bool_t      string_itr_is_prefix(const string_itr* it);
+bool_t      string_itr_is_null(const string_itr* it);
 bool_t      string_itr_is_postfix(const string_itr* it);
 
 bool_t      string_itr_next(string_itr* it);

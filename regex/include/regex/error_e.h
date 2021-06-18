@@ -9,6 +9,8 @@
 enum
 {
     ERROR_NONE_e,
+
+    ERROR_INVALID_ARGUMENT_e,
     ERROR_OUT_OF_MEMORY_e,
     ERROR_OVERFLOW_e,
 };

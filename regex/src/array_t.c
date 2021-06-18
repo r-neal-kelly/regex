@@ -158,7 +158,6 @@ error_e array_push(array_t* it, const void_t* unit_in)
     assert(it);
     assert(unit_in);
     assert(array_is_valid(it));
-    assert(it->unit_count + 1 > it->unit_count);
 
     if (array_should_grow(it)) {
         error_e error = array_grow(it);
@@ -173,6 +172,23 @@ error_e array_push(array_t* it, const void_t* unit_in)
     return ERROR_NONE_e;
 }
 
+error_e array_push_none(array_t* it)
+{
+    assert(it);
+    assert(array_is_valid(it));
+
+    if (array_should_grow(it)) {
+        error_e error = array_grow(it);
+        if (error) {
+            return error;
+        }
+    }
+
+    it->unit_count += 1;
+
+    return ERROR_NONE_e;
+}
+
 bool_t array_pop(array_t* it, void_t* unit_out)
 {
     assert(it);
@@ -182,9 +198,22 @@ bool_t array_pop(array_t* it, void_t* unit_out)
     if (it->unit_count > 0) {
         it->unit_count -= 1;
         memcpy(unit_out, it->memory.pointer.bytes + (it->unit_count * it->unit_size), it->unit_size);
-        return 1;
+        return true;
     } else {
-        return 0;
+        return false;
+    }
+}
+
+bool_t array_pop_none(array_t* it)
+{
+    assert(it);
+    assert(array_is_valid(it));
+
+    if (it->unit_count > 0) {
+        it->unit_count -= 1;
+        return true;
+    } else {
+        return false;
     }
 }
 

@@ -11,17 +11,12 @@
 
 string_i STRING_UTF_8_i = DEFINE_STRING_i(string_utf_8);
 
-string_i* string_utf_8_interface()
-{
-    return &STRING_UTF_8_i;
-}
-
 word_t string_utf_8_unit_size()
 {
     return sizeof(utf_8_t);
 }
 
-void_t string_utf_8_read(const void_t* at, string_subsequence_t* result)
+void_t string_utf_8_read_forward(const void_t* at, string_subsequence_t* result)
 {
     assert(at);
     assert(result);
@@ -46,149 +41,28 @@ void_t string_utf_8_read_reverse(const void_t* from, const void_t* first, string
     );
 }
 
-u32_t string_utf_8_point(const string_subsequence_t* subsequence)
+void_t string_utf_8_to_point(const string_subsequence_t* subsequence, u32_t* result)
 {
     assert(subsequence);
+    assert(result);
 
-    utf_32_subsequence_t point;
-    utf_8_subsequence_to_32((utf_8_subsequence_t*)subsequence, &point);
-    return point.a;
+    utf_32_subsequence_t to;
+    utf_8_subsequence_to_32((utf_8_subsequence_t*)subsequence, &to);
+    *result = to.a;
 }
 
-bool_t string_utf_8_has_null(const string_t* it)
+void_t string_utf_8_to_subsequence(u32_t point, string_subsequence_t* result)
 {
-    assert(it);
+    assert(point);
+    assert(result);
 
-    word_t unit_count = array_unit_count(&it->array);
-    if (unit_count > 0) {
-        utf_8_t* last = array_access(&it->array, unit_count - 1);
-        return *last == 0;
-    } else {
-        return false;
-    }
-}
-
-error_e string_utf_8_push_null(string_t* it)
-{
-    assert(it);
-
-    if (!string_utf_8_has_null(it)) {
-        utf_8_t terminator = 0;
-        error_e error = array_push(&it->array, &terminator);
-        if (error) {
-            return error;
-        }
-        it->point_count += 1;
+    if (!utf_32_is_scalar_point(point)) {
+        point = UTF_REPLACEMENT_CHARACTER;
     }
 
-    return ERROR_NONE_e;
-}
-
-void_t* string_utf_8_at_null(const string_t* it)
-{
-    assert(it);
-    assert(string_utf_8_has_null(it));
-
-    return array_access(&it->array, array_unit_count(&it->array) - 1);
-}
-
-static error_e _string_utf_8_push_sequence(string_t* it, utf_8_subsequence_t* sequence)
-{
-    assert(it);
-    assert(sequence);
-
-    error_e error;
-    for (word_t idx = 0, end = sequence->unit_count; idx < end; idx += 1) {
-        error = array_push(&it->array, ((utf_8_t*)sequence) + idx);
-        if (error) {
-            return error;
-        }
-    }
-    it->point_count += 1;
-
-    return ERROR_NONE_e;
-}
-
-error_e string_utf_8_push_point(string_t* it, u32_t point)
-{
-    assert(it);
-
-    if (point != 0) {
-        if (!utf_32_is_scalar_point(point)) {
-            point = UTF_REPLACEMENT_CHARACTER;
-        }
-
-        utf_32_subsequence_t from;
-        from.a = point;
-        from.unit_count = 1;
-
-        utf_8_subsequence_t to;
-        utf_32_subsequence_to_8(&from, &to);
-
-        utf_8_t terminator;
-        array_pop(&it->array, &terminator);
-
-        error_e error = _string_utf_8_push_sequence(it, &to);
-        if (error) {
-            return error;
-        }
-
-        error = array_push(&it->array, &terminator);
-        if (error) {
-            return error;
-        }
-    }
-
-    return ERROR_NONE_e;
-}
-
-error_e string_utf_8_push_raw(string_t* it, const void_t* raw, string_i* raw_interface)
-{
-    assert(it);
-    assert(raw);
-    assert(raw_interface);
-
-    error_e error;
-
-    utf_8_t terminator;
-    array_pop(&it->array, &terminator);
-
-    string_subsequence_t subsequence;
-    if (raw_interface == string_utf_8_interface()) {
-        for (; ; (byte_t*)raw += subsequence.units_read * string_utf_8_unit_size()) {
-            raw_interface->read(raw, &subsequence);
-            if (((utf_8_subsequence_t*)&subsequence)->a) {
-                error = _string_utf_8_push_sequence(it, (utf_8_subsequence_t*)&subsequence);
-                if (error) {
-                    return error;
-                }
-            } else {
-                break;
-            }
-        }
-    } else {
-        utf_32_subsequence_t from;
-        utf_8_subsequence_t to;
-        from.unit_count = 1;
-        for (; ; (byte_t*)raw += subsequence.units_read * string_utf_8_unit_size()) {
-            raw_interface->read(raw, &subsequence);
-            from.a = raw_interface->point(&subsequence);
-            if (from.a) {
-                utf_32_subsequence_to_8(&from, &to);
-                error = _string_utf_8_push_sequence(it, &to);
-                if (error) {
-                    return error;
-                }
-            } else {
-                break;
-            }
-        }
-    }
-
-    error = array_push(&it->array, &terminator);
-    if (error) {
-        return error;
-    }
-
-    return ERROR_NONE_e;
+    utf_32_subsequence_t from;
+    from.a = point;
+    from.unit_count = 1;
+    utf_32_subsequence_to_8(&from, (utf_8_subsequence_t*)result);
+    result->units_read = ((utf_8_subsequence_t*)result)->unit_count;
 }

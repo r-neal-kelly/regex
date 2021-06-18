@@ -33,6 +33,8 @@ word_t  array_unit_count(const array_t* it);
 
 void_t* array_access(const array_t* it, word_t index);
 error_e array_push(array_t* it, const void_t* unit_in);
+error_e array_push_none(array_t* it);
 bool_t  array_pop(array_t* it, void_t* unit_out);
+bool_t  array_pop_none(array_t* it);
 
 void_t  array_clear(array_t* it);
