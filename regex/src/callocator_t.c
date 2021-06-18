@@ -16,10 +16,10 @@ bool_t callocator_allocate(pointer_t* it, word_t byte_count)
     it->bytes = os_calloc(byte_count);
     if (it->bytes) {
         it->byte_count = byte_count;
-        return 1;
+        return true;
     } else {
         it->byte_count = 0;
-        return 0;
+        return false;
     }
 }
 
@@ -33,9 +33,9 @@ bool_t callocator_reallocate(pointer_t* it, word_t new_byte_count)
     if (new_bytes) {
         it->bytes = new_bytes;
         it->byte_count = new_byte_count;
-        return 1;
+        return true;
     } else {
-        return 0;
+        return false;
     }
 }
 

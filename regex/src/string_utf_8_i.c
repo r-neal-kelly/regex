@@ -21,27 +21,28 @@ word_t string_utf_8_unit_size()
     return sizeof(utf_8_t);
 }
 
-void_t string_utf_8_read(const void_t* raw, word_t unit_index, string_subsequence_t* result)
+void_t string_utf_8_read(const void_t* at, string_subsequence_t* result)
 {
-    assert(raw);
+    assert(at);
     assert(result);
 
     result->units_read = utf_8_subsequence_create(
         (utf_8_subsequence_t*)result,
-        (utf_8_t*)raw + unit_index
+        (utf_8_t*)at
     );
 }
 
-void_t string_utf_8_read_reverse(const void_t* raw, word_t unit_index, string_subsequence_t* result)
+void_t string_utf_8_read_reverse(const void_t* from, const void_t* first, string_subsequence_t* result)
 {
-    assert(raw);
+    assert(from);
+    assert(first);
     assert(result);
-    assert(unit_index > 0);
+    assert(from > first);
 
     result->units_read = utf_8_subsequence_create_reverse(
         (utf_8_subsequence_t*)result,
-        (utf_8_t*)raw + unit_index,
-        (utf_8_t*)raw
+        (utf_8_t*)from,
+        (utf_8_t*)first
     );
 }
 
@@ -54,7 +55,7 @@ u32_t string_utf_8_point(const string_subsequence_t* subsequence)
     return point.a;
 }
 
-bool_t string_utf_8_has_terminator(const string_t* it)
+bool_t string_utf_8_has_null(const string_t* it)
 {
     assert(it);
 
@@ -67,11 +68,11 @@ bool_t string_utf_8_has_terminator(const string_t* it)
     }
 }
 
-error_e string_utf_8_terminate(string_t* it)
+error_e string_utf_8_push_null(string_t* it)
 {
     assert(it);
 
-    if (!string_utf_8_has_terminator(it)) {
+    if (!string_utf_8_has_null(it)) {
         utf_8_t terminator = 0;
         error_e error = array_push(&it->array, &terminator);
         if (error) {
@@ -83,12 +84,12 @@ error_e string_utf_8_terminate(string_t* it)
     return ERROR_NONE_e;
 }
 
-word_t string_utf_8_terminator_unit_index(const string_t* it)
+void_t* string_utf_8_at_null(const string_t* it)
 {
     assert(it);
-    assert(string_utf_8_has_terminator(it));
+    assert(string_utf_8_has_null(it));
 
-    return array_unit_count(&it->array) - 1;
+    return array_access(&it->array, array_unit_count(&it->array) - 1);
 }
 
 static error_e _string_utf_8_push_sequence(string_t* it, utf_8_subsequence_t* sequence)
@@ -154,14 +155,13 @@ error_e string_utf_8_push_raw(string_t* it, const void_t* raw, string_i* raw_int
 
     string_subsequence_t subsequence;
     if (raw_interface == string_utf_8_interface()) {
-        for (word_t idx = 0; ;) {
-            raw_interface->read(raw, idx, &subsequence);
+        for (; ; (byte_t*)raw += subsequence.units_read * string_utf_8_unit_size()) {
+            raw_interface->read(raw, &subsequence);
             if (((utf_8_subsequence_t*)&subsequence)->a) {
                 error = _string_utf_8_push_sequence(it, (utf_8_subsequence_t*)&subsequence);
                 if (error) {
                     return error;
                 }
-                idx += subsequence.units_read;
             } else {
                 break;
             }
@@ -170,8 +170,8 @@ error_e string_utf_8_push_raw(string_t* it, const void_t* raw, string_i* raw_int
         utf_32_subsequence_t from;
         utf_8_subsequence_t to;
         from.unit_count = 1;
-        for (word_t idx = 0; ;) {
-            raw_interface->read(raw, idx, &subsequence);
+        for (; ; (byte_t*)raw += subsequence.units_read * string_utf_8_unit_size()) {
+            raw_interface->read(raw, &subsequence);
             from.a = raw_interface->point(&subsequence);
             if (from.a) {
                 utf_32_subsequence_to_8(&from, &to);
@@ -179,7 +179,6 @@ error_e string_utf_8_push_raw(string_t* it, const void_t* raw, string_i* raw_int
                 if (error) {
                     return error;
                 }
-                idx += subsequence.units_read;
             } else {
                 break;
             }

@@ -7,7 +7,12 @@
 
 #include "regex/array_t.h"
 
-error_e array_create(array_t* it, allocator_i* allocator, word_t unit_size, word_t reserve_unit_count, float_t grow_rate)
+error_e array_create(array_t* it,
+                     allocator_i* allocator,
+                     word_t unit_size,
+                     word_t reserve_unit_count,
+                     word_t preface_unit_count,
+                     float_t grow_rate)
 {
     assert(it);
     assert(allocator);
@@ -15,8 +20,16 @@ error_e array_create(array_t* it, allocator_i* allocator, word_t unit_size, word
     assert(reserve_unit_count > 0);
     assert(grow_rate >= 1.0f);
 
-    error_e error = memory_create(&it->memory, allocator, unit_size * reserve_unit_count);
+    error_e error = memory_create(
+        &it->memory,
+        allocator,
+        unit_size * reserve_unit_count,
+        unit_size * preface_unit_count
+    );
     if (error) {
+        it->unit_size = 0;
+        it->unit_count = 0;
+        it->grow_rate = 0.0f;
         return error;
     }
 
@@ -24,7 +37,7 @@ error_e array_create(array_t* it, allocator_i* allocator, word_t unit_size, word
     it->unit_count = 0;
     it->grow_rate = grow_rate;
 
-    return error;
+    return ERROR_NONE_e;
 }
 
 void_t array_destroy(array_t* it)
@@ -107,7 +120,7 @@ error_e array_grow(array_t* it)
     return memory_reserve(&it->memory, reserve_byte_count);
 }
 
-void_t* array_bytes(const array_t* it)
+void_t* array_raw(const array_t* it)
 {
     assert(it);
     assert(array_is_valid(it));

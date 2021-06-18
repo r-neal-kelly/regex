@@ -12,9 +12,9 @@ typedef struct string_i string_i;
 
 typedef struct string_t
 {
-    string_i*   interface;
     array_t     array;
     word_t      point_count;
+    string_i*   interface;
 }
 string_t;
 
@@ -27,47 +27,54 @@ typedef struct string_subsequence_t
 }
 string_subsequence_t;
 
-typedef struct string_iterator_t
+typedef struct string_itr
 {
     const string_t*         owner;
     string_subsequence_t    subsequence;
-    word_t                  unit_index;
+    byte_t*                 byte_pointer;
     word_t                  point_index;
 }
-string_iterator_t;
+string_itr;
 
-error_e             string_create(string_t* it, string_i* interface, allocator_i* allocator, word_t reserve_unit_count, float_t grow_rate);
-error_e             string_create_with_raw(string_t* it, string_i* interface, const void_t* raw, string_i* raw_interface, allocator_i* allocator, word_t reserve_unit_count, float_t grow_rate);
-error_e             string_copy(string_t* it, const string_t* other, allocator_i* allocator, float_t grow_rate);
-void_t              string_destroy(string_t* it);
-bool_t              string_is_valid(const string_t* it);
+error_e     string_create(string_t* it, string_i* interface, allocator_i* allocator, word_t reserve_unit_count, float_t grow_rate);
+error_e     string_create_with_raw(string_t* it, string_i* interface, const void_t* raw, string_i* raw_interface, allocator_i* allocator, word_t reserve_unit_count, float_t grow_rate);
+error_e     string_copy(string_t* it, const string_t* other, allocator_i* allocator, float_t grow_rate);
+void_t      string_destroy(string_t* it);
+bool_t      string_is_valid(const string_t* it);
 
-string_i*           string_interface(const string_t* it);
-void_t*             string_raw(const string_t* it);
+string_i*   string_interface(const string_t* it);
+byte_t*     string_raw(const string_t* it);
+byte_t*     string_raw_null(const string_t* it);
+byte_t*     string_raw_prefix(const string_t* it);
+byte_t*     string_raw_postfix(const string_t* it);
 
-word_t              string_unit_size(const string_t* it);
-word_t              string_unit_count(const string_t* it);
-word_t              string_unit_length(const string_t* it);
-word_t              string_point_count(const string_t* it);
-word_t              string_point_length(const string_t* it);
+word_t      string_unit_size(const string_t* it);
+word_t      string_unit_count(const string_t* it);
+word_t      string_unit_length(const string_t* it);
+word_t      string_point_count(const string_t* it);
+word_t      string_point_length(const string_t* it);
 
-error_e             string_push_point(string_t* it, u32_t point);
-error_e             string_push_iterator(string_t* it, const string_iterator_t* iterator);
-error_e             string_push_other(string_t* it, const string_t* other);
-error_e             string_push_raw(string_t* it, const void_t* raw, string_i* raw_interface);
-error_e             string_push_raw_guess(string_t* it, const void_t* raw);
+error_e     string_push_point(string_t* it, u32_t point);
+error_e     string_push_iterator(string_t* it, const string_itr* iterator);
+error_e     string_push_other(string_t* it, const string_t* other);
+error_e     string_push_raw(string_t* it, const void_t* raw, string_i* raw_interface);
+error_e     string_push_raw_guess(string_t* it, const void_t* raw);
 
-error_e             string_join(const string_t* it, const string_t* other, string_t* result);
+error_e     string_join(const string_t* it, const string_t* other, string_t* result);
 
-void_t              string_clear(string_t* it);
+void_t      string_clear(string_t* it);
 
-string_iterator_t   string_first(const string_t* it);
-string_iterator_t   string_last(const string_t* it);
-string_iterator_t   string_end(const string_t* it);
-bool_t              string_next(string_iterator_t* iterator);
-bool_t              string_previous(string_iterator_t* iterator);
-u32_t               string_point(const string_iterator_t* iterator);
-bool_t              string_is_valid_iterator(const string_iterator_t* iterator);
-bool_t              string_is_first(const string_iterator_t* iterator);
-bool_t              string_is_last(const string_iterator_t* iterator);
-bool_t              string_is_end(const string_iterator_t* iterator);
+string_itr  string_first(const string_t* it);
+string_itr  string_last(const string_t* it);
+string_itr  string_null(const string_t* it);
+
+bool_t      string_itr_is_valid(const string_itr* it);
+bool_t      string_itr_is_prefix(const string_itr* it);
+bool_t      string_itr_is_postfix(const string_itr* it);
+
+bool_t      string_itr_next(string_itr* it);
+bool_t      string_itr_previous(string_itr* it);
+
+u32_t       string_itr_point(const string_itr* it);
+word_t      string_itr_unit_index(const string_itr* it);
+word_t      string_itr_point_index(const string_itr* it);

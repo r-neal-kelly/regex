@@ -9,32 +9,53 @@
 #include "regex/string_i.h"
 #include "regex/string_t.h"
 
-error_e string_create(string_t* it, string_i* interface, allocator_i* allocator, word_t reserve_unit_count, float_t grow_rate)
+error_e string_create(string_t* it,
+                      string_i* interface,
+                      allocator_i* allocator,
+                      word_t reserve_unit_count,
+                      float_t grow_rate)
 {
     assert(it);
     assert(interface);
     assert(allocator);
+    assert(reserve_unit_count > 0);
 
     error_e error;
 
+    it->point_count = 0;
     it->interface = interface;
 
-    error = array_create(&it->array, allocator, it->interface->unit_size(), reserve_unit_count, grow_rate);
+    error = array_create(
+        &it->array,
+        allocator,
+        it->interface->unit_size(),
+        reserve_unit_count,
+        1,
+        grow_rate
+    );
     if (error) {
+        it->point_count = 0;
+        it->interface = 0;
         return error;
     }
 
-    it->point_count = 0;
-
-    error = it->interface->terminate(it);
+    error = it->interface->push_null(it);
     if (error) {
+        it->point_count = 0;
+        it->interface = 0;
         return error;
     }
 
     return ERROR_NONE_e;
 }
 
-error_e string_create_with_raw(string_t* it, string_i* interface, const void_t* raw, string_i* raw_interface, allocator_i* allocator, word_t reserve_unit_count, float_t grow_rate)
+error_e string_create_with_raw(string_t* it,
+                               string_i* interface,
+                               const void_t* raw,
+                               string_i* raw_interface,
+                               allocator_i* allocator,
+                               word_t reserve_unit_count,
+                               float_t grow_rate)
 {
     assert(it);
     assert(interface);
@@ -44,8 +65,6 @@ error_e string_create_with_raw(string_t* it, string_i* interface, const void_t* 
 
     error_e error;
 
-    it->interface = interface;
-
     error = string_create(it, interface, allocator, reserve_unit_count, grow_rate);
     if (error) {
         return error;
@@ -54,7 +73,7 @@ error_e string_create_with_raw(string_t* it, string_i* interface, const void_t* 
     return string_push_raw(it, raw, raw_interface);
 }
 
-error_e string_copy(string_t* it, const string_t* other, allocator_i* allocator, float_t grow_rate)
+/*error_e string_copy(string_t* it, const string_t* other, allocator_i* allocator, float_t grow_rate)
 {
     assert(it);
     assert(other);
@@ -71,7 +90,7 @@ error_e string_copy(string_t* it, const string_t* other, allocator_i* allocator,
     //it->interface.copy(it, other); // we may be able to do this on this level now that we have the iterator
 
     return ERROR_NONE_e;
-}
+}*/
 
 void_t string_destroy(string_t* it)
 {
@@ -90,7 +109,7 @@ bool_t string_is_valid(const string_t* it)
 {
     assert(it);
 
-    return array_is_valid(&it->array) && it->interface && it->interface->has_terminator(it) && it->point_count > 0;
+    return array_is_valid(&it->array) && it->interface && it->interface->has_null(it) && it->point_count > 0;
 }
 
 string_i* string_interface(const string_t* it)
@@ -101,12 +120,33 @@ string_i* string_interface(const string_t* it)
     return it->interface;
 }
 
-void_t* string_raw(const string_t* it)
+byte_t* string_raw(const string_t* it)
 {
     assert(it);
     assert(string_is_valid(it));
 
-    return array_bytes(&it->array);
+    return array_raw(&it->array);
+}
+
+byte_t* string_raw_null(const string_t* it)
+{
+    assert(it);
+    assert(string_is_valid(it));
+
+    return it->interface->at_null(it);
+}
+
+byte_t* string_raw_prefix(const string_t* it)
+{
+    assert(it);
+    assert(string_is_valid(it));
+
+    return (byte_t*)array_raw(&it->array) - (1 * string_unit_size(it));
+}
+
+byte_t* string_raw_postfix(const string_t* it)
+{
+    return (byte_t*)array_raw(&it->array) + (string_unit_count(it) * string_unit_size(it));
 }
 
 word_t string_unit_size(const string_t* it)
@@ -174,134 +214,152 @@ void_t string_clear(string_t* it)
     array_clear(&it->array);
     it->point_count = 0;
     
-    error_e error = it->interface->terminate(it);
+    error_e error = it->interface->push_null(it);
     assert(error == ERROR_NONE_e);
 }
 
-string_iterator_t string_first(const string_t* it)
+string_itr string_first(const string_t* it)
 {
     assert(it);
     assert(string_is_valid(it));
 
-    string_iterator_t iterator;
+    string_itr iterator;
     iterator.owner = it;
 
-    it->interface->read(string_raw(it), 0, &iterator.subsequence);
-    iterator.unit_index = 0;
+    byte_t* byte_pointer = string_raw(it);
+    it->interface->read(byte_pointer, &iterator.subsequence);
+    iterator.byte_pointer = byte_pointer;
     iterator.point_index = 0;
 
     return iterator;
 }
 
-string_iterator_t string_last(const string_t* it)
+string_itr string_last(const string_t* it)
 {
     assert(it);
     assert(string_is_valid(it));
     assert(string_unit_length(it) > 0);
 
-    string_iterator_t iterator;
+    string_itr iterator;
     iterator.owner = it;
 
-    word_t terminator_unit_index = it->interface->terminator_unit_index(it);
-    it->interface->read_reverse(string_raw(it), terminator_unit_index, &iterator.subsequence);
-    iterator.unit_index = terminator_unit_index - iterator.subsequence.units_read;
+    byte_t* byte_pointer = string_raw_null(it);
+    it->interface->read_reverse(byte_pointer, string_raw(it), &iterator.subsequence);
+    iterator.byte_pointer = byte_pointer - iterator.subsequence.units_read * string_unit_size(it);
     iterator.point_index = string_point_length(it) - 1;
 
     return iterator;
 }
 
-string_iterator_t string_end(const string_t* it)
+string_itr string_null(const string_t* it)
 {
     assert(it);
     assert(string_is_valid(it));
 
-    string_iterator_t iterator;
+    string_itr iterator;
     iterator.owner = it;
 
-    word_t terminator_unit_index = it->interface->terminator_unit_index(it);
-    it->interface->read(string_raw(it), terminator_unit_index, &iterator.subsequence);
-    iterator.unit_index = terminator_unit_index;
-    iterator.point_index = string_point_length(it);
+    byte_t* byte_pointer = string_raw_null(it);
+    it->interface->read(byte_pointer, &iterator.subsequence);
+    iterator.byte_pointer = byte_pointer;
+    iterator.point_index = string_point_count(it) - 1;
 
     return iterator;
 }
 
-bool_t string_next(string_iterator_t* it)
-{
-    assert(it);
-    assert(string_is_valid_iterator(it));
-
-    if (!string_is_end(it)) {
-        it->unit_index += it->subsequence.units_read;
-        it->point_index += 1;
-        it->owner->interface->read(string_raw(it->owner), it->unit_index, &it->subsequence);
-
-        return true;
-    } else {
-        return false;
-    }
-}
-
-bool_t string_previous(string_iterator_t* it)
-{
-    assert(it);
-    assert(string_is_valid_iterator(it));
-
-    if (!string_is_first(it)) {
-        it->owner->interface->read_reverse(string_raw(it->owner), it->unit_index, &it->subsequence);
-        it->unit_index -= it->subsequence.units_read;
-        it->point_index -= 1;
-
-        return true;
-    } else {
-        return false;
-    }
-}
-
-u32_t string_point(const string_iterator_t* it)
-{
-    assert(it);
-    assert(string_is_valid_iterator(it));
-
-    return it->owner->interface->point(&it->subsequence);
-}
-
-bool_t string_is_valid_iterator(const string_iterator_t* it)
+bool_t string_itr_is_valid(const string_itr* it)
 {
     assert(it);
 
     if (it->owner &&
         string_is_valid(it->owner) &&
-        it->unit_index <= string_unit_count(it->owner) &&
-        it->point_index <= string_point_count(it->owner)) {
+        it->byte_pointer >= string_raw_prefix(it->owner) &&
+        it->byte_pointer <= string_raw_postfix(it->owner)) {
+        return it->point_index <= string_point_count(it->owner) || it->point_index == (word_t)0 - 1;
+    } else {
+        return false;
+    }
+}
+
+bool_t string_itr_is_prefix(const string_itr* it)
+{
+    assert(it);
+    assert(string_itr_is_valid(it));
+
+    return it->byte_pointer == string_raw_prefix(it->owner);
+}
+
+bool_t string_itr_is_postfix(const string_itr* it)
+{
+    assert(it);
+    assert(string_itr_is_valid(it));
+
+    return it->byte_pointer == string_raw_postfix(it->owner);
+}
+
+bool_t string_itr_next(string_itr* it)
+{
+    assert(it);
+    assert(string_itr_is_valid(it));
+
+    if (!string_itr_is_postfix(it)) {
+        it->byte_pointer += it->subsequence.units_read * string_unit_size(it->owner);
+        it->point_index += 1;
+        it->owner->interface->read(it->byte_pointer, &it->subsequence);
         return true;
     } else {
         return false;
     }
 }
 
-bool_t string_is_first(const string_iterator_t* it)
+bool_t string_itr_previous(string_itr* it)
 {
     assert(it);
-    assert(string_is_valid_iterator(it));
+    assert(string_itr_is_valid(it));
 
-    return it->unit_index == 0;
+    if (!string_itr_is_prefix(it)) {
+        if (it->byte_pointer != string_raw(it->owner)) {
+            it->owner->interface->read_reverse(it->byte_pointer, string_raw(it->owner), &it->subsequence);
+            it->byte_pointer -= it->subsequence.units_read * string_unit_size(it->owner);
+            it->point_index -= 1;
+        } else {
+            it->byte_pointer = string_raw_prefix(it->owner);
+            it->point_index -= 1;
+        }
+        return true;
+    } else {
+        return false;
+    }
 }
 
-bool_t string_is_last(const string_iterator_t* it)
+u32_t string_itr_point(const string_itr* it)
 {
     assert(it);
-    assert(string_is_valid_iterator(it));
+    assert(string_itr_is_valid(it));
+    assert(!string_itr_is_prefix(it));
+    assert(!string_itr_is_postfix(it));
 
-    return it->unit_index == it->owner->interface->terminator_unit_index(it->owner);
+    return it->owner->interface->point(&it->subsequence);
 }
 
-bool_t string_is_end(const string_iterator_t* it)
+word_t string_itr_unit_index(const string_itr* it)
 {
     assert(it);
-    assert(string_is_valid_iterator(it));
+    assert(string_itr_is_valid(it));
+    assert(!string_itr_is_prefix(it));
+    assert(!string_itr_is_postfix(it));
 
-    return it->unit_index == string_unit_count(it->owner);
+    return (it->byte_pointer - string_raw(it->owner)) / string_unit_size(it->owner);
+}
+
+word_t string_itr_point_index(const string_itr* it)
+{
+    assert(it);
+    assert(string_itr_is_valid(it));
+    assert(!string_itr_is_prefix(it));
+    assert(!string_itr_is_postfix(it));
+
+    return it->point_index;
 }
 
 
