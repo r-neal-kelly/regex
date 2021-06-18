@@ -21,7 +21,7 @@ void_t charcoder_utf_8_read_forward(const void_t* from, string_subsequence_t* re
     assert(from);
     assert(result);
 
-    result->units_read = utf_8_subsequence_create(
+    result->units_read = utf_8_subsequence_forward(
         (utf_8_subsequence_t*)result,
         (utf_8_t*)from
     );
@@ -34,7 +34,7 @@ void_t charcoder_utf_8_read_reverse(const void_t* from, const void_t* first, str
     assert(result);
     assert(from > first);
 
-    result->units_read = utf_8_subsequence_create_reverse(
+    result->units_read = utf_8_subsequence_reverse(
         (utf_8_subsequence_t*)result,
         (utf_8_t*)from,
         (utf_8_t*)first
@@ -55,7 +55,7 @@ void_t charcoder_utf_8_to_subsequence(u32_t point, string_subsequence_t* result)
 {
     assert(result);
 
-    if (!utf_32_is_scalar_point(point)) {
+    if (!utf_32_is_scalar(point)) {
         point = UTF_REPLACEMENT_CHARACTER;
     }
 

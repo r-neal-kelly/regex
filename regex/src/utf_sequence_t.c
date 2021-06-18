@@ -49,7 +49,7 @@ Ill-formed Truncated UTF-8 Subsequences:
     This holds true when reading a UTF-8 sequence backwards or forwards.
 */
 
-u8_t utf_8_subsequence_create(utf_8_subsequence_t* it, const utf_8_t* from)
+u8_t utf_8_subsequence_forward(utf_8_subsequence_t* it, const utf_8_t* from)
 {
     assert(it);
     assert(from);
@@ -198,7 +198,7 @@ u8_t utf_8_subsequence_create(utf_8_subsequence_t* it, const utf_8_t* from)
     #undef replace
 }
 
-u8_t utf_8_subsequence_create_reverse(utf_8_subsequence_t* it, const utf_8_t* from, const utf_8_t* first)
+u8_t utf_8_subsequence_reverse(utf_8_subsequence_t* it, const utf_8_t* from, const utf_8_t* first)
 {
     assert(it);
     assert(from);
@@ -451,14 +451,14 @@ void_t utf_8_subsequence_to_32(const utf_8_subsequence_t* it, utf_32_subsequence
     to->unit_count = 1;
 }
 
-u8_t utf_16_subsequence_create(utf_16_subsequence_t* it, const utf_16_t* from, bool_t do_swap)
+u8_t utf_16_subsequence_forward(utf_16_subsequence_t* it, const utf_16_t* from)
 {
     assert(it);
     assert(from);
 
-    it->a = do_swap ? os_swap_bytes_u16(*from) : *from;
+    it->a = *from;
     if (utf_16_is_high_surrogate(it->a)) {
-        it->b = do_swap ? os_swap_bytes_u16(*(from + 1)) : *(from + 1);
+        it->b = *(from + 1);
         if (utf_16_is_low_surrogate(it->b)) {
             it->unit_count = 2;
         } else {
@@ -475,17 +475,17 @@ u8_t utf_16_subsequence_create(utf_16_subsequence_t* it, const utf_16_t* from, b
     return it->unit_count;
 }
 
-u8_t utf_16_subsequence_create_reverse(utf_16_subsequence_t* it, const utf_16_t* from, const utf_16_t* first, bool_t do_swap)
+u8_t utf_16_subsequence_reverse(utf_16_subsequence_t* it, const utf_16_t* from, const utf_16_t* first)
 {
     assert(it);
     assert(from);
     assert(first);
     assert(from > first);
 
-    utf_16_t read_a = do_swap ? os_swap_bytes_u16(*(from - 1)) : *(from - 1);
+    utf_16_t read_a = *(from - 1);
     if (utf_16_is_low_surrogate(read_a)) {
         if (from - 2 >= first) {
-            utf_16_t read_b = do_swap ? os_swap_bytes_u16(*(from - 2)) : *(from - 2);
+            utf_16_t read_b = *(from - 2);
             if (utf_16_is_high_surrogate(read_b)) {
                 it->a = read_b;
                 it->b = read_a;
@@ -516,7 +516,9 @@ bool_t utf_16_subsequence_is_well_formed(const utf_16_subsequence_t* it)
     if (it->unit_count == 1) {
         return !utf_16_is_surrogate(it->a);
     } else if (it->unit_count == 2) {
-        return utf_16_is_high_surrogate(it->a) && utf_16_is_low_surrogate(it->b);
+        return
+            utf_16_is_high_surrogate(it->a) &&
+            utf_16_is_low_surrogate(it->b);
     } else {
         return false;
     }
@@ -543,18 +545,140 @@ void_t utf_16_subsequence_to_32(const utf_16_subsequence_t* it, utf_32_subsequen
         to->a = it->a;
         to->unit_count = 1;
     } else {
-        to->a = ((it->a - UTF_SURROGATE_HIGH_FIRST) << 10) + (it->b - UTF_SURROGATE_LOW_FIRST) + 0x10000;
+        to->a =
+            ((it->a - UTF_SURROGATE_HIGH_FIRST) << 10) +
+            (it->b - UTF_SURROGATE_LOW_FIRST) + 0x10000;
         to->unit_count = 1;
     }
 }
 
-u8_t utf_32_subsequence_create(utf_32_subsequence_t* it, const utf_32_t* from, bool_t do_swap)
+u8_t utf_16_subsequence_swapped_forward(utf_16_subsequence_t* it, const utf_16_t* from)
 {
     assert(it);
     assert(from);
 
-    it->a = do_swap ? os_swap_bytes_u32(*from) : *from;
-    if (!utf_32_is_scalar_point(it->a)) {
+    utf_16_t a = os_swap_bytes_u16(*from);
+    if (utf_16_is_high_surrogate(a)) {
+        utf_16_t b = os_swap_bytes_u16(*(from + 1));
+        if (utf_16_is_low_surrogate(b)) {
+            it->a = *from;
+            it->b = *(from + 1);
+            it->unit_count = 2;
+        } else {
+            it->a = UTF_16_REPLACEMENT_CHARACTER_SWAPPED;
+            it->unit_count = 1;
+        }
+    } else if (utf_16_is_low_surrogate(a)) {
+        it->a = UTF_16_REPLACEMENT_CHARACTER_SWAPPED;
+        it->unit_count = 1;
+    } else {
+        it->a = *from;
+        it->unit_count = 1;
+    }
+
+    return it->unit_count;
+}
+
+u8_t utf_16_subsequence_swapped_reverse(utf_16_subsequence_t* it, const utf_16_t* from, const utf_16_t* first)
+{
+    assert(it);
+    assert(from);
+    assert(first);
+    assert(from > first);
+
+    utf_16_t a = os_swap_bytes_u16(*(from - 1));
+    if (utf_16_is_low_surrogate(a)) {
+        if (from - 2 >= first) {
+            utf_16_t b = os_swap_bytes_u16(*(from - 2));
+            if (utf_16_is_high_surrogate(b)) {
+                it->a = *(from - 2);
+                it->b = *(from - 1);
+                it->unit_count = 2;
+            } else {
+                it->a = UTF_16_REPLACEMENT_CHARACTER_SWAPPED;
+                it->unit_count = 1;
+            }
+        } else {
+            it->a = UTF_16_REPLACEMENT_CHARACTER_SWAPPED;
+            it->unit_count = 1;
+        }
+    } else if (utf_16_is_high_surrogate(a)) {
+        it->a = UTF_16_REPLACEMENT_CHARACTER_SWAPPED;
+        it->unit_count = 1;
+    } else {
+        it->a = *(from - 1);
+        it->unit_count = 1;
+    }
+
+    return it->unit_count;
+}
+
+bool_t utf_16_subsequence_swapped_is_well_formed(const utf_16_subsequence_t* it)
+{
+    assert(it);
+
+    if (it->unit_count == 1) {
+        return !utf_16_is_surrogate(os_swap_bytes_u16(it->a));
+    } else if (it->unit_count == 2) {
+        return
+            utf_16_is_high_surrogate(os_swap_bytes_u16(it->a)) &&
+            utf_16_is_low_surrogate(os_swap_bytes_u16(it->b));
+    } else {
+        return false;
+    }
+}
+
+void_t utf_16_subsequence_swapped_to_8(const utf_16_subsequence_t* it, utf_8_subsequence_t* to)
+{
+    assert(it);
+    assert(to);
+    assert(utf_16_subsequence_swapped_is_well_formed(it));
+
+    utf_32_subsequence_t intermediate;
+    utf_16_subsequence_swapped_to_32(it, &intermediate);
+    utf_32_subsequence_to_8(&intermediate, to);
+}
+
+void_t utf_16_subsequence_swapped_to_16(const utf_16_subsequence_t* it, utf_16_subsequence_t* to)
+{
+    assert(it);
+    assert(to);
+    assert(utf_16_subsequence_swapped_is_well_formed(it));
+
+    if (it->unit_count == 1) {
+        to->a = os_swap_bytes_u16(it->a);
+        to->unit_count = 1;
+    } else {
+        to->a = os_swap_bytes_u16(it->a);
+        to->b = os_swap_bytes_u16(it->b);
+        to->unit_count = 2;
+    }
+}
+
+void_t utf_16_subsequence_swapped_to_32(const utf_16_subsequence_t* it, utf_32_subsequence_t* to)
+{
+    assert(it);
+    assert(to);
+    assert(utf_16_subsequence_swapped_is_well_formed(it));
+
+    if (it->unit_count == 1) {
+        to->a = os_swap_bytes_u16(it->a);
+        to->unit_count = 1;
+    } else {
+        to->a =
+            ((os_swap_bytes_u16(it->a) - UTF_SURROGATE_HIGH_FIRST) << 10) +
+            (os_swap_bytes_u16(it->b) - UTF_SURROGATE_LOW_FIRST) + 0x10000;
+        to->unit_count = 1;
+    }
+}
+
+u8_t utf_32_subsequence_forward(utf_32_subsequence_t* it, const utf_32_t* from)
+{
+    assert(it);
+    assert(from);
+
+    it->a = *from;
+    if (!utf_32_is_scalar(it->a)) {
         it->a = UTF_REPLACEMENT_CHARACTER;
     }
     it->unit_count = 1;
@@ -562,15 +686,15 @@ u8_t utf_32_subsequence_create(utf_32_subsequence_t* it, const utf_32_t* from, b
     return it->unit_count;
 }
 
-u8_t utf_32_subsequence_create_reverse(utf_32_subsequence_t* it, const utf_32_t* from, const utf_32_t* first, bool_t do_swap)
+u8_t utf_32_subsequence_reverse(utf_32_subsequence_t* it, const utf_32_t* from, const utf_32_t* first)
 {
     assert(it);
     assert(from);
     assert(first);
     assert(from > first);
 
-    it->a = do_swap ? os_swap_bytes_u32(*(from - 1)) : *(from - 1);
-    if (!utf_32_is_scalar_point(it->a)) {
+    it->a = *(from - 1);
+    if (!utf_32_is_scalar(it->a)) {
         it->a = UTF_REPLACEMENT_CHARACTER;
     }
     it->unit_count = 1;
@@ -582,7 +706,7 @@ bool_t utf_32_subsequence_is_well_formed(const utf_32_subsequence_t* it)
 {
     assert(it);
 
-    return it->unit_count == 1 && utf_32_is_scalar_point(it->a);
+    return it->unit_count == 1 && utf_32_is_scalar(it->a);
 }
 
 void_t utf_32_subsequence_to_8(const utf_32_subsequence_t* it, utf_8_subsequence_t* to)
@@ -626,4 +750,112 @@ void_t utf_32_subsequence_to_16(const utf_32_subsequence_t* it, utf_16_subsequen
         to->b = ((it->a - 0x10000) & 0x3FF) + UTF_SURROGATE_LOW_FIRST;
         to->unit_count = 2;
     }
+}
+
+void_t utf_32_subsequence_to_16_swapped(const utf_32_subsequence_t* it, utf_16_subsequence_t* to)
+{
+    assert(it);
+    assert(to);
+    assert(utf_32_subsequence_is_well_formed(it));
+
+    if (it->a <= 0xFFFF) {
+        to->a = os_swap_bytes_u16(it->a);
+        to->unit_count = 1;
+    } else {
+        to->a = os_swap_bytes_u16(((it->a - 0x10000) >> 10) + UTF_SURROGATE_HIGH_FIRST);
+        to->b = os_swap_bytes_u16(((it->a - 0x10000) & 0x3FF) + UTF_SURROGATE_LOW_FIRST);
+        to->unit_count = 2;
+    }   
+}
+
+u8_t utf_32_subsequence_swapped_forward(utf_32_subsequence_t* it, const utf_32_t* from)
+{
+    assert(it);
+    assert(from);
+
+    it->a = *from;
+    if (!utf_32_is_scalar(os_swap_bytes_u32(it->a))) {
+        it->a = UTF_32_REPLACEMENT_CHARACTER_SWAPPED;
+    }
+    it->unit_count = 1;
+
+    return it->unit_count;
+}
+
+u8_t utf_32_subsequence_swapped_reverse(utf_32_subsequence_t* it, const utf_32_t* from, const utf_32_t* first)
+{
+    assert(it);
+    assert(from);
+    assert(first);
+    assert(from > first);
+
+    it->a = *(from - 1);
+    if (!utf_32_is_scalar(os_swap_bytes_u32(it->a))) {
+        it->a = UTF_32_REPLACEMENT_CHARACTER_SWAPPED;
+    }
+    it->unit_count = 1;
+
+    return it->unit_count;
+}
+
+bool_t utf_32_subsequence_swapped_is_well_formed(const utf_32_subsequence_t* it)
+{
+    assert(it);
+
+    return it->unit_count == 1 && utf_32_is_scalar(os_swap_bytes_u32(it->a));
+}
+
+void_t utf_32_subsequence_swapped_to_8(const utf_32_subsequence_t* it, utf_8_subsequence_t* to)
+{
+    assert(it);
+    assert(to);
+    assert(utf_32_subsequence_swapped_is_well_formed(it));
+
+    utf_32_t utf_32 = os_swap_bytes_u32(it->a);
+    if (utf_32 <= 0x7F) {
+        to->a = utf_32;
+        to->unit_count = 1;
+    } else if (utf_32 <= 0x7FF) {
+        to->a = ((utf_32 >> 6) & 0x1F) | 0xC0;
+        to->b = (utf_32 & 0x3F) | 0x80;
+        to->unit_count = 2;
+    } else if (utf_32 <= 0xFFFF) {
+        to->a = ((utf_32 >> 12) & 0x0F) | 0xE0;
+        to->b = ((utf_32 >> 6) & 0x3F) | 0x80;
+        to->c = (utf_32 & 0x3F) | 0x80;
+        to->unit_count = 3;
+    } else {
+        to->a = ((utf_32 >> 18) & 0x07) | 0xF0;
+        to->b = ((utf_32 >> 12) & 0x3F) | 0x80;
+        to->c = ((utf_32 >> 6) & 0x3F) | 0x80;
+        to->d = (utf_32 & 0x3F) | 0x80;
+        to->unit_count = 4;
+    }
+}
+
+void_t utf_32_subsequence_swapped_to_16(const utf_32_subsequence_t* it, utf_16_subsequence_t* to)
+{
+    assert(it);
+    assert(to);
+    assert(utf_32_subsequence_swapped_is_well_formed(it));
+
+    utf_32_t utf_32 = os_swap_bytes_u32(it->a);
+    if (utf_32 <= 0xFFFF) {
+        to->a = utf_32;
+        to->unit_count = 1;
+    } else {
+        to->a = ((utf_32 - 0x10000) >> 10) + UTF_SURROGATE_HIGH_FIRST;
+        to->b = ((utf_32 - 0x10000) & 0x3FF) + UTF_SURROGATE_LOW_FIRST;
+        to->unit_count = 2;
+    }
+}
+
+void_t utf_32_subsequence_swapped_to_32(const utf_32_subsequence_t* it, utf_32_subsequence_t* to)
+{
+    assert(it);
+    assert(to);
+    assert(utf_32_subsequence_swapped_is_well_formed(it));
+
+    to->a = os_swap_bytes_u32(it->a);
+    to->unit_count = 1;
 }
