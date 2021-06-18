@@ -12,6 +12,7 @@
 #include "regex/array_t.h"
 #include "regex/callocator_t.h"
 #include "regex/charcoder_utf_8_i.h"
+#include "regex/charcoder_utf_16_le_i.h"
 #include "regex/init.h"
 #include "regex/intrinsic.h"
 #include "regex/string_t.h"
@@ -71,6 +72,17 @@ int main(int argument_count, char* arguments[])
     wprintf(L"\n");
 
     string_destroy(&string);
+
+    string_create_with_raw(&string, &CHARCODER_UTF_16_LE_i, u8"neal.νηαλ.נהאל", &CHARCODER_UTF_8_i, &CALLOCATOR, 16, 1.5f);
+    wprintf(L"%s\n", (unsigned short*)string.array.memory.pointer.bytes);
+
+    for (string_itr itr = string_first(&string); !string_itr_is_postfix(&itr); string_itr_next(&itr)) {
+        wprintf(L"unit_idx: %zu, point_idx: %zu is %8.8X\n",
+                string_itr_unit_index(&itr),
+                string_itr_point_index(&itr),
+                string_itr_point(&itr));
+    }
+    wprintf(L"\n");
 
     u16_t exit = getwc(stdin);
 

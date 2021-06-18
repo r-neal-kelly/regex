@@ -9,14 +9,14 @@
 
 /*
     This interface requires that your decoded points be able to fit in 32 bits. (e.g. Unicode needs 21 bits.)
-    Your max subsequence length must fit in 8 bits. (e.g. the max for Unicode is found in UTF-8, being 4.)
+    Your max subsequence length must fit in 8 bits. (e.g. the max for Unicode is found in UTF-8, that being 4.)
     Your string_subsequence_t must fit within 56 bits. (e.g. each Unicode type fits in 40 bits.)
-    The last 8 bits in the string_subsequence_t are reserved for how many units are read in your procedures
-    or how many units are contained in the subsequence in your conversion procedures.
-    The string_subsequence_t itself must have the unit subsequence in order at the beginning of the struct.
+    The last 8 bits in the string_subsequence_t are reserved for how many units are read from a string
+    or how many units are contained in the subsequence after the conversion from a point.
+    The string_subsequence_t itself must have the unit subsequence in order and at the beginning of the struct.
     The lingua franca for decoded points is Unicode. Meaning if you wish to communicate with unknown interfaces,
-    you need to be able to receive and send a Unicode point, converting it to your point before encoding.
-    Although not necessarily important for encoding, the string_t always uses a null-terminated unit.
+    you need to be able to receive and send a Unicode point, converting to and from your point.
+    The string_t always uses a null-terminated unit that is exactly the size of one unit.
 */
 
 typedef struct string_subsequence_t string_subsequence_t;

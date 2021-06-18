@@ -286,11 +286,13 @@ error_e string_push_raw(string_t* it, const void_t* raw, charcoder_i* raw_charco
             }
         }
     } else {
-        word_t unit_size = string_unit_size(it);
+        word_t raw_unit_size = raw_charcoder->unit_size();
+        word_t raw_units_read = 0;
         string_subsequence_t subsequence;
         u32_t point;
-        for (; !string_has_null(it); (byte_t*)raw += subsequence.units_read * unit_size) {
+        for (; !string_has_null(it); (byte_t*)raw += raw_units_read * raw_unit_size) {
             raw_charcoder->read_forward(raw, &subsequence);
+            raw_units_read = subsequence.units_read;
             raw_charcoder->to_point(&subsequence, &point);
             it->charcoder->to_subsequence(point, &subsequence);
             error = string_push_subsequence(it, &subsequence);

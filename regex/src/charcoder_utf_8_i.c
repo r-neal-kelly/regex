@@ -16,14 +16,14 @@ word_t charcoder_utf_8_unit_size()
     return sizeof(utf_8_t);
 }
 
-void_t charcoder_utf_8_read_forward(const void_t* at, string_subsequence_t* result)
+void_t charcoder_utf_8_read_forward(const void_t* from, string_subsequence_t* result)
 {
-    assert(at);
+    assert(from);
     assert(result);
 
     result->units_read = utf_8_subsequence_create(
         (utf_8_subsequence_t*)result,
-        (utf_8_t*)at
+        (utf_8_t*)from
     );
 }
 
@@ -53,7 +53,6 @@ void_t charcoder_utf_8_to_point(const string_subsequence_t* subsequence, u32_t* 
 
 void_t charcoder_utf_8_to_subsequence(u32_t point, string_subsequence_t* result)
 {
-    assert(point);
     assert(result);
 
     if (!utf_32_is_scalar_point(point)) {
