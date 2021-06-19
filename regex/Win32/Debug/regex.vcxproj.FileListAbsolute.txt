@@ -1,2 +1,0 @@
-C:\git\regex\Win32\Debug\regex.pdb
-C:\git\regex\regex\Win32\Debug\regex.pdb

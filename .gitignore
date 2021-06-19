@@ -1,4 +1,6 @@
 /.git
 /.vs
+/regex/Win32
 /regex/x64
+/test/Win32
 /test/x64
