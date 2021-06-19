@@ -75,6 +75,9 @@
     <ClInclude Include="include\regex\charcoder_utf_32_le_i.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\regex\charcoder_ascii_i.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\array_t.c">
@@ -123,6 +126,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\charcoder_utf_32_le_i.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\charcoder_ascii_i.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

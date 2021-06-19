@@ -4,8 +4,6 @@
 
 #pragma once
 
-#include <stdio.h>
-
 #include "regex/pointer_t.h"
 
 #include "intrinsic.h"
