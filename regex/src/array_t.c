@@ -86,6 +86,14 @@ word_t array_capacity(const array_t* it)
     return it->memory.pointer.byte_count / it->unit_size;
 }
 
+float_t array_grow_rate(const array_t* it)
+{
+    assert(it);
+    assert(array_is_valid(it));
+
+    return it->grow_rate;
+}
+
 bool_t array_should_grow(const array_t* it)
 {
     assert(it);

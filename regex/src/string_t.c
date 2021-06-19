@@ -5,8 +5,6 @@
 #include <assert.h>
 
 #include "regex/charcoder_i.h"
-#include "regex/os.h"
-#include "regex/utf_sequence_t.h"
 #include "regex/string_t.h"
 
 static bool_t string_has_null(const string_t* it)
@@ -124,7 +122,29 @@ error_e string_create(string_t* it,
     return ERROR_NONE_e;
 }
 
-error_e string_create_with_raw(string_t* it,
+error_e string_create_from(string_t* it,
+                           charcoder_i* charcoder,
+                           const string_t* other,
+                           allocator_i* allocator,
+                           float_t grow_rate)
+{
+    assert(it);
+    assert(charcoder);
+    assert(other);
+    assert(allocator);
+    assert(string_is_valid(other));
+
+    error_e error;
+
+    error = string_create(it, charcoder, allocator, string_unit_count(other), grow_rate);
+    if (error) {
+        return error;
+    }
+
+    return string_push_raw(it, string_raw(other), string_charcoder(other));
+}
+
+error_e string_create_from_raw(string_t* it,
                                charcoder_i* charcoder,
                                const void_t* raw,
                                charcoder_i* raw_charcoder,
@@ -146,6 +166,27 @@ error_e string_create_with_raw(string_t* it,
     }
 
     return string_push_raw(it, raw, raw_charcoder);
+}
+
+error_e string_create_copy(string_t* it,
+                           const string_t* other,
+                           allocator_i* allocator,
+                           float_t grow_rate)
+{
+    assert(it);
+    assert(other);
+    assert(allocator);
+
+    charcoder_i* other_charcoder = string_charcoder(other);
+
+    error_e error;
+
+    error = string_create(it, other_charcoder, allocator, string_unit_count(other), grow_rate);
+    if (error) {
+        return error;
+    }
+
+    return string_push_raw(it, string_raw(other), other_charcoder);
 }
 
 void_t string_destroy(string_t* it)
@@ -172,6 +213,13 @@ charcoder_i* string_charcoder(const string_t* it)
     assert(it);
 
     return it->charcoder;
+}
+
+allocator_i* string_allocator(const string_t* it)
+{
+    assert(it);
+
+    return it->array.memory.allocator;
 }
 
 byte_t* string_raw(const string_t* it)
@@ -264,6 +312,14 @@ error_e string_push_point(string_t* it, u32_t point)
     return ERROR_NONE_e;
 }
 
+error_e string_push_iterator(string_t* it, const string_itr* iterator)
+{
+    assert(it);
+    assert(iterator);
+
+    return string_push_point(it, string_itr_point(iterator));
+}
+
 error_e string_push_raw(string_t* it, const void_t* raw, charcoder_i* raw_charcoder)
 {
     assert(it);
@@ -275,6 +331,7 @@ error_e string_push_raw(string_t* it, const void_t* raw, charcoder_i* raw_charco
     string_pop_null(it);
 
     if (raw_charcoder == string_charcoder(it)) {
+        // we could just do a straight copy of the units. this is potentially fixing the string however
         word_t unit_size = string_unit_size(it);
         string_subsequence_t subsequence;
         for (; !string_has_null(it); (byte_t*)raw += subsequence.units_read * unit_size) {
@@ -301,6 +358,37 @@ error_e string_push_raw(string_t* it, const void_t* raw, charcoder_i* raw_charco
                 return error;
             }
         }
+    }
+
+    return ERROR_NONE_e;
+}
+
+error_e string_push_other(string_t* it, const string_t* other)
+{
+    assert(it);
+    assert(other);
+    assert(string_is_valid(other));
+
+    return string_push_raw(it, string_raw(other), string_charcoder(other));
+}
+
+error_e string_join(const string_t* it, const string_t* other, string_t* result)
+{
+    assert(it);
+    assert(other);
+    assert(result);
+    assert(string_is_valid(other));
+
+    error_e error;
+
+    error = string_create_copy(result, it, string_allocator(it), array_grow_rate(&it->array));
+    if (error) {
+        return error;
+    }
+
+    error = string_push_other(result, other);
+    if (error) {
+        return error;
     }
 
     return ERROR_NONE_e;

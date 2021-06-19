@@ -36,13 +36,33 @@ typedef struct string_itr
 }
 string_itr;
 
-error_e         string_create(string_t* it, charcoder_i* charcoder, allocator_i* allocator, word_t reserve_unit_count, float_t grow_rate);
-error_e         string_create_with_raw(string_t* it, charcoder_i* charcoder, const void_t* raw, charcoder_i* raw_charcoder, allocator_i* allocator, word_t reserve_unit_count, float_t grow_rate);
-error_e         string_copy(string_t* it, const string_t* other, allocator_i* allocator, float_t grow_rate);
+error_e         string_create(string_t* it,
+                              charcoder_i* charcoder,
+                              allocator_i* allocator,
+                              word_t reserve_unit_count,
+                              float_t grow_rate);
+error_e         string_create_from(string_t* it,
+                                   charcoder_i* charcoder,
+                                   const string_t* other,
+                                   allocator_i* allocator,
+                                   float_t grow_rate);
+error_e         string_create_from_raw(string_t* it,
+                                       charcoder_i* charcoder,
+                                       const void_t* raw,
+                                       charcoder_i* raw_charcoder,
+                                       allocator_i* allocator,
+                                       word_t reserve_unit_count,
+                                       float_t grow_rate);
+error_e         string_create_copy(string_t* it,
+                                   const string_t* other,
+                                   allocator_i* allocator,
+                                   float_t grow_rate);
 void_t          string_destroy(string_t* it);
 bool_t          string_is_valid(const string_t* it);
 
 charcoder_i*    string_charcoder(const string_t* it);
+allocator_i*    string_allocator(const string_t* it);
+
 byte_t*         string_raw(const string_t* it);
 byte_t*         string_raw_null(const string_t* it);
 byte_t*         string_raw_prefix(const string_t* it);
@@ -56,9 +76,9 @@ word_t          string_point_length(const string_t* it);
 
 error_e         string_push_point(string_t* it, u32_t point);
 error_e         string_push_iterator(string_t* it, const string_itr* iterator);
-error_e         string_push_other(string_t* it, const string_t* other);
 error_e         string_push_raw(string_t* it, const void_t* raw, charcoder_i* raw_charcoder);
-error_e         string_push_raw_guess(string_t* it, const void_t* raw);
+error_e         string_push_raw_guess(string_t* it, const void_t* raw); // We may have to implement this somewhere else
+error_e         string_push_other(string_t* it, const string_t* other);
 
 error_e         string_join(const string_t* it, const string_t* other, string_t* result);
 

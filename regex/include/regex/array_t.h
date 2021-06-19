@@ -23,6 +23,8 @@ bool_t  array_is_valid(const array_t* it);
 
 error_e array_reserve(array_t* it, word_t reserve_unit_count);
 word_t  array_capacity(const array_t* it);
+
+float_t array_grow_rate(const array_t* it);
 bool_t  array_should_grow(const array_t* it);
 error_e array_grow(array_t* it);
 

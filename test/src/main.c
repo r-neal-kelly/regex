@@ -34,7 +34,7 @@ int main(int argument_count, char* arguments[])
     test_pointer();
 
     string_t string;
-    string_create_with_raw(&string, &CHARCODER_UTF_8_i, u8"neal.νηαλ.נהאל", &CHARCODER_UTF_8_i, &CALLOCATOR, 16, 1.5f);
+    string_create_from_raw(&string, &CHARCODER_UTF_8_i, u8"neal.νηαλ.נהאל", &CHARCODER_UTF_8_i, &CALLOCATOR, 16, 1.5f);
 
     wprintf(L"string unit_count: %zu\n", string_unit_count(&string));
     wprintf(L"string point_count: %zu\n", string_point_count(&string));
@@ -74,10 +74,11 @@ int main(int argument_count, char* arguments[])
 
     string_destroy(&string);
 
-    string_create_with_raw(&string, &CHARCODER_UTF_16_BE_i, u8"neal.νηαλ.נהאל", &CHARCODER_UTF_8_i, &CALLOCATOR, 16, 1.5f);
-    wprintf(L"%s\n", (unsigned short*)string.array.memory.pointer.bytes);
+    string_t str_a;
+    string_create_from_raw(&str_a, &CHARCODER_UTF_16_BE_i, u8"neal.νηαλ.נהאל", &CHARCODER_UTF_8_i, &CALLOCATOR, 16, 1.5f);
+    wprintf(L"%s\n", (unsigned short*)str_a.array.memory.pointer.bytes);
 
-    for (string_itr itr = string_first(&string); !string_itr_is_postfix(&itr); string_itr_next(&itr)) {
+    for (string_itr itr = string_first(&str_a); !string_itr_is_postfix(&itr); string_itr_next(&itr)) {
         wprintf(L"unit_idx: %zu, point_idx: %zu is %8.8X, literally: 0x%4.4X\n",
                 string_itr_unit_index(&itr),
                 string_itr_point_index(&itr),
@@ -86,12 +87,11 @@ int main(int argument_count, char* arguments[])
     }
     wprintf(L"\n");
 
-    string_destroy(&string);
+    string_t str_b;
+    string_create_from_raw(&str_b, &CHARCODER_UTF_16_LE_i, string_raw(&str_a), &CHARCODER_UTF_16_BE_i, &CALLOCATOR, 16, 1.5f);
+    wprintf(L"%s\n", (unsigned short*)str_b.array.memory.pointer.bytes);
 
-    string_create_with_raw(&string, &CHARCODER_UTF_16_LE_i, u8"neal.νηαλ.נהאל", &CHARCODER_UTF_8_i, &CALLOCATOR, 16, 1.5f);
-    wprintf(L"%s\n", (unsigned short*)string.array.memory.pointer.bytes);
-
-    for (string_itr itr = string_first(&string); !string_itr_is_postfix(&itr); string_itr_next(&itr)) {
+    for (string_itr itr = string_first(&str_b); !string_itr_is_postfix(&itr); string_itr_next(&itr)) {
         wprintf(L"unit_idx: %zu, point_idx: %zu is %8.8X, literally: 0x%4.4X\n",
                 string_itr_unit_index(&itr),
                 string_itr_point_index(&itr),
@@ -100,7 +100,34 @@ int main(int argument_count, char* arguments[])
     }
     wprintf(L"\n");
 
-    string_destroy(&string);
+    string_t str_c;
+    string_join(&str_b, &str_a, &str_c);
+    wprintf(L"%s\n", (unsigned short*)str_c.array.memory.pointer.bytes);
+
+    for (string_itr itr = string_first(&str_c); !string_itr_is_postfix(&itr); string_itr_next(&itr)) {
+        wprintf(L"unit_idx: %zu, point_idx: %zu is %8.8X, literally: 0x%4.4X\n",
+                string_itr_unit_index(&itr),
+                string_itr_point_index(&itr),
+                string_itr_point(&itr),
+                *(u16_t*)itr.byte_pointer);
+    }
+    wprintf(L"\n");
+
+    string_t str_d;
+    string_create_from(&str_d, &CHARCODER_UTF_8_i, &str_c, &CALLOCATOR, 1.5f);
+
+    for (string_itr itr = string_first(&str_d); !string_itr_is_postfix(&itr); string_itr_next(&itr)) {
+        wprintf(L"unit_idx: %zu, point_idx: %zu is %8.8X\n",
+                string_itr_unit_index(&itr),
+                string_itr_point_index(&itr),
+                string_itr_point(&itr));
+    }
+    wprintf(L"\n");
+
+    string_destroy(&str_a);
+    string_destroy(&str_b);
+    string_destroy(&str_c);
+    string_destroy(&str_d);
 
     u16_t exit = getwc(stdin);
 
