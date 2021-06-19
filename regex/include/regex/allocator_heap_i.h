@@ -7,6 +7,4 @@
 #include "regex/allocator_i.h"
 #include "regex/intrinsic.h"
 
-typedef allocator_i allocator_t;
-
-extern allocator_t ALLOCATOR;
+extern allocator_i ALLOCATOR_HEAP_i;

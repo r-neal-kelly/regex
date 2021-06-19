@@ -24,16 +24,10 @@
     <ClInclude Include="include\regex\pointer_t.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\regex\callocator_t.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\regex\allocator_i.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\regex\os.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\regex\allocator_t.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\regex\math.h">
@@ -78,6 +72,12 @@
     <ClInclude Include="include\regex\charcoder_ascii_i.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\regex\allocator_heap_zero_i.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\regex\allocator_heap_i.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\array_t.c">
@@ -86,13 +86,7 @@
     <ClCompile Include="src\os.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\allocator_t.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\math.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\callocator_t.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\memory_t.c">
@@ -129,6 +123,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\charcoder_ascii_i.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\allocator_heap_i.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\allocator_heap_zero_i.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

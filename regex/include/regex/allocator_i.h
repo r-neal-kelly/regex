@@ -10,8 +10,15 @@ typedef struct pointer_t pointer_t;
 
 typedef struct allocator_i
 {
-    bool_t(* const allocate)(pointer_t* it, word_t byte_count);
-    bool_t(* const reallocate)(pointer_t* it, word_t new_byte_count);
-    void_t(* const deallocate)(pointer_t* it);
+    bool_t  (* const allocate)(pointer_t* it, word_t byte_count);
+    bool_t  (* const reallocate)(pointer_t* it, word_t new_byte_count);
+    void_t  (* const deallocate)(pointer_t* it);
 }
 allocator_i;
+
+#define DEFINE_ALLOCATOR_i(LABEL_LEAD_) \
+{                                       \
+    &LABEL_LEAD_ ## _allocate,          \
+    &LABEL_LEAD_ ## _reallocate,        \
+    &LABEL_LEAD_ ## _deallocate,        \
+}

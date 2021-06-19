@@ -149,12 +149,12 @@
   <ItemGroup>
     <ClInclude Include="include\regex\allocator_i.h" />
     <ClInclude Include="include\regex\array_t.h" />
-    <ClInclude Include="include\regex\callocator_t.h" />
+    <ClInclude Include="include\regex\allocator_heap_zero_i.h" />
     <ClInclude Include="include\regex\charcoder_ascii_i.h" />
     <ClInclude Include="include\regex\init.h" />
     <ClInclude Include="include\regex\math.h" />
     <ClInclude Include="include\regex\os.h" />
-    <ClInclude Include="include\regex\allocator_t.h" />
+    <ClInclude Include="include\regex\allocator_heap_i.h" />
     <ClInclude Include="include\regex\intrinsic.h" />
     <ClInclude Include="include\regex\memory_t.h" />
     <ClInclude Include="include\regex\pointer_t.h" />
@@ -171,8 +171,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\array_t.c" />
-    <ClCompile Include="src\callocator_t.c" />
-    <ClCompile Include="src\allocator_t.c" />
+    <ClCompile Include="src\allocator_heap_zero_i.c" />
+    <ClCompile Include="src\allocator_heap_i.c" />
     <ClCompile Include="src\charcoder_ascii_i.c" />
     <ClCompile Include="src\init.c" />
     <ClCompile Include="src\math.c" />

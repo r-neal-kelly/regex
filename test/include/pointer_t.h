@@ -8,8 +8,9 @@
 
 #include "intrinsic.h"
 
-inline void_t test_pointer()
+inline void_t test_pointer_t()
 {
+    test_begin(L"pointer_is_valid");
     {
         pointer_t ptr;
         ptr.bytes = 0;
@@ -34,4 +35,5 @@ inline void_t test_pointer()
         ptr.byte_count = 1;
         test(pointer_is_valid(&ptr) == true);
     }
+    test_end();
 }

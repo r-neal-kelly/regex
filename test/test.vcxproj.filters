@@ -26,5 +26,8 @@
     <ClInclude Include="include\intrinsic.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\allocator_heap_i.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
