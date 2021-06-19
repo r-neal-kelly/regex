@@ -1,0 +1,19 @@
+﻿  array_t.c
+  callocator_t.c
+  allocator_t.c
+  charcoder_ascii_i.c
+  init.c
+  math.c
+  memory_t.c
+  os.c
+  pointer_t.c
+  charcoder_utf_16_be_i.c
+  charcoder_utf_16_le_i.c
+  charcoder_utf_32_be_i.c
+  charcoder_utf_32_le_i.c
+  charcoder_utf_8_i.c
+  utf.c
+  utf_sequence_t.c
+  string_t.c
+  Generating Code...
+  regex.vcxproj -> C:\git\regex\Win32\Debug\regex.lib
