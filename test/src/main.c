@@ -22,6 +22,7 @@
 #include "regex/string_t.h"
 
 #include "allocator_heap_i.h"
+#include "array_t.h"
 #include "pointer_t.h"
 
 int main(int argument_count, char* arguments[])
@@ -37,6 +38,7 @@ int main(int argument_count, char* arguments[])
 
     test_pointer_t();
     test_allocator_heap_i();
+    test_array_t();
 
     wprintf(L"\n");
 

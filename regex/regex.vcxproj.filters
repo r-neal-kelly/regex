@@ -78,6 +78,9 @@
     <ClInclude Include="include\regex\allocator_heap_i.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\regex\hasher_i.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\array_t.c">

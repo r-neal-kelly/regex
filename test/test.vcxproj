@@ -156,6 +156,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\allocator_heap_i.h" />
+    <ClInclude Include="include\array_t.h" />
     <ClInclude Include="include\intrinsic.h" />
     <ClInclude Include="include\pointer_t.h" />
   </ItemGroup>

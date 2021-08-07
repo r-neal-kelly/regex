@@ -29,5 +29,8 @@
     <ClInclude Include="include\allocator_heap_i.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\array_t.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

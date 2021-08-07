@@ -151,6 +151,7 @@
     <ClInclude Include="include\regex\array_t.h" />
     <ClInclude Include="include\regex\allocator_heap_zero_i.h" />
     <ClInclude Include="include\regex\charcoder_ascii_i.h" />
+    <ClInclude Include="include\regex\hasher_i.h" />
     <ClInclude Include="include\regex\init.h" />
     <ClInclude Include="include\regex\math.h" />
     <ClInclude Include="include\regex\os.h" />
