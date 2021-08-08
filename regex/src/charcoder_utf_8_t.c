@@ -4,12 +4,10 @@
 
 #include <assert.h>
 
-#include "regex/charcoder_utf_8_i.h"
+#include "regex/charcoder_utf_8_t.h"
 #include "regex/string_t.h"
 #include "regex/utf.h"
 #include "regex/utf_sequence_t.h"
-
-charcoder_i CHARCODER_UTF_8_i = DEFINE_CHARCODER_i(charcoder_utf_8);
 
 word_t charcoder_utf_8_unit_size()
 {
@@ -65,3 +63,5 @@ void_t charcoder_utf_8_to_subsequence(u32_t point, string_subsequence_t* result)
     utf_32_subsequence_to_8(&from, (utf_8_subsequence_t*)result);
     result->units_read = ((utf_8_subsequence_t*)result)->unit_count;
 }
+
+charcoder_utf_8_t CHARCODER_UTF_8 = DEFINE_CHARCODER_i(charcoder_utf_8);

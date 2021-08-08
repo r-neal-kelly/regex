@@ -16,5 +16,5 @@ hasher_i;
 
 #define DEFINE_HASHER_i(LABEL_LEAD_)    \
 {                                       \
-    &LABEL_LEAD_ ## _hash_pointer,      \
+    &LABEL_LEAD_ ## _hash_word,         \
 }

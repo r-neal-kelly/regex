@@ -149,21 +149,21 @@
   <ItemGroup>
     <ClInclude Include="include\regex\allocator_i.h" />
     <ClInclude Include="include\regex\array_t.h" />
-    <ClInclude Include="include\regex\allocator_heap_zero_i.h" />
-    <ClInclude Include="include\regex\charcoder_ascii_i.h" />
+    <ClInclude Include="include\regex\allocator_heap_zero_t.h" />
+    <ClInclude Include="include\regex\charcoder_ascii_t.h" />
     <ClInclude Include="include\regex\hasher_i.h" />
     <ClInclude Include="include\regex\init.h" />
     <ClInclude Include="include\regex\math.h" />
     <ClInclude Include="include\regex\os.h" />
-    <ClInclude Include="include\regex\allocator_heap_i.h" />
+    <ClInclude Include="include\regex\allocator_heap_t.h" />
     <ClInclude Include="include\regex\intrinsic.h" />
     <ClInclude Include="include\regex\memory_t.h" />
     <ClInclude Include="include\regex\pointer_t.h" />
-    <ClInclude Include="include\regex\charcoder_utf_16_be_i.h" />
-    <ClInclude Include="include\regex\charcoder_utf_16_le_i.h" />
-    <ClInclude Include="include\regex\charcoder_utf_32_be_i.h" />
-    <ClInclude Include="include\regex\charcoder_utf_32_le_i.h" />
-    <ClInclude Include="include\regex\charcoder_utf_8_i.h" />
+    <ClInclude Include="include\regex\charcoder_utf_16_be_t.h" />
+    <ClInclude Include="include\regex\charcoder_utf_16_le_t.h" />
+    <ClInclude Include="include\regex\charcoder_utf_32_be_t.h" />
+    <ClInclude Include="include\regex\charcoder_utf_32_le_t.h" />
+    <ClInclude Include="include\regex\charcoder_utf_8_t.h" />
     <ClInclude Include="include\regex\error_e.h" />
     <ClInclude Include="include\regex\charcoder_i.h" />
     <ClInclude Include="include\regex\utf.h" />
@@ -172,19 +172,19 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\array_t.c" />
-    <ClCompile Include="src\allocator_heap_zero_i.c" />
-    <ClCompile Include="src\allocator_heap_i.c" />
-    <ClCompile Include="src\charcoder_ascii_i.c" />
+    <ClCompile Include="src\allocator_heap_zero_t.c" />
+    <ClCompile Include="src\allocator_heap_t.c" />
+    <ClCompile Include="src\charcoder_ascii_t.c" />
     <ClCompile Include="src\init.c" />
     <ClCompile Include="src\math.c" />
     <ClCompile Include="src\memory_t.c" />
     <ClCompile Include="src\os.c" />
     <ClCompile Include="src\pointer_t.c" />
-    <ClCompile Include="src\charcoder_utf_16_be_i.c" />
-    <ClCompile Include="src\charcoder_utf_16_le_i.c" />
-    <ClCompile Include="src\charcoder_utf_32_be_i.c" />
-    <ClCompile Include="src\charcoder_utf_32_le_i.c" />
-    <ClCompile Include="src\charcoder_utf_8_i.c" />
+    <ClCompile Include="src\charcoder_utf_16_be_t.c" />
+    <ClCompile Include="src\charcoder_utf_16_le_t.c" />
+    <ClCompile Include="src\charcoder_utf_32_be_t.c" />
+    <ClCompile Include="src\charcoder_utf_32_le_t.c" />
+    <ClCompile Include="src\charcoder_utf_8_t.c" />
     <ClCompile Include="src\utf.c" />
     <ClCompile Include="src\utf_sequence_t.c" />
     <ClCompile Include="src\string_t.c" />

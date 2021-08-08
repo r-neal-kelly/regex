@@ -54,28 +54,28 @@
     <ClInclude Include="include\regex\charcoder_i.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\regex\charcoder_utf_8_i.h">
+    <ClInclude Include="include\regex\charcoder_utf_8_t.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\regex\charcoder_utf_16_be_i.h">
+    <ClInclude Include="include\regex\charcoder_utf_16_be_t.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\regex\charcoder_utf_16_le_i.h">
+    <ClInclude Include="include\regex\charcoder_utf_16_le_t.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\regex\charcoder_utf_32_be_i.h">
+    <ClInclude Include="include\regex\charcoder_utf_32_be_t.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\regex\charcoder_utf_32_le_i.h">
+    <ClInclude Include="include\regex\charcoder_utf_32_le_t.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\regex\charcoder_ascii_i.h">
+    <ClInclude Include="include\regex\charcoder_ascii_t.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\regex\allocator_heap_zero_i.h">
+    <ClInclude Include="include\regex\allocator_heap_zero_t.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\regex\allocator_heap_i.h">
+    <ClInclude Include="include\regex\allocator_heap_t.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\regex\hasher_i.h">
@@ -110,28 +110,28 @@
     <ClCompile Include="src\init.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\charcoder_utf_8_i.c">
+    <ClCompile Include="src\charcoder_utf_8_t.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\charcoder_utf_16_be_i.c">
+    <ClCompile Include="src\charcoder_utf_16_be_t.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\charcoder_utf_16_le_i.c">
+    <ClCompile Include="src\charcoder_utf_16_le_t.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\charcoder_utf_32_be_i.c">
+    <ClCompile Include="src\charcoder_utf_32_be_t.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\charcoder_utf_32_le_i.c">
+    <ClCompile Include="src\charcoder_utf_32_le_t.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\charcoder_ascii_i.c">
+    <ClCompile Include="src\charcoder_ascii_t.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\allocator_heap_i.c">
+    <ClCompile Include="src\allocator_heap_t.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\allocator_heap_zero_i.c">
+    <ClCompile Include="src\allocator_heap_zero_t.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

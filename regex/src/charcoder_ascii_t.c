@@ -4,10 +4,8 @@
 
 #include <assert.h>
 
-#include "regex/charcoder_ascii_i.h"
+#include "regex/charcoder_ascii_t.h"
 #include "regex/string_t.h"
-
-charcoder_i CHARCODER_ASCII_i = DEFINE_CHARCODER_i(charcoder_ascii);
 
 word_t charcoder_ascii_unit_size()
 {
@@ -53,3 +51,5 @@ void_t charcoder_ascii_to_subsequence(u32_t point, string_subsequence_t* result)
     *(u8_t*)result = (u8_t)point;
     result->units_read = 1;
 }
+
+charcoder_ascii_t CHARCODER_ASCII = DEFINE_CHARCODER_i(charcoder_ascii);

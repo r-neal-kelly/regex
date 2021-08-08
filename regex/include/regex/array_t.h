@@ -17,7 +17,12 @@ typedef struct array_t
 }
 array_t;
 
-error_e array_create(array_t* it, allocator_i* allocator, word_t unit_size, word_t reserve_unit_count, word_t preface_unit_count, float_t grow_rate);
+error_e array_create(array_t* it,
+                     allocator_i* allocator,
+                     word_t unit_size,
+                     word_t reserve_unit_count,
+                     word_t preface_unit_count,
+                     float_t grow_rate);
 void_t  array_destroy(array_t* it);
 bool_t  array_is_valid(const array_t* it);
 
